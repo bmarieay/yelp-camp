@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const cities = require('./cities');
 const {places, descriptors} = require('./seedHelpers');
+//get the model 
 const Campground = require('../models/campground');
 
 //initial connection error
@@ -21,7 +22,6 @@ db.once("open", () => {
 });
 
 //pick a rand from array length
-
 const sample = array => array[Math.floor(Math.random() * array.length)];
 
 const seedDB = async () => {
