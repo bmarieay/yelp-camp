@@ -4,7 +4,8 @@ const path = require("path");
 const mongoose = require("mongoose");
 const ejsMate = require("ejs-mate");
 const Campground = require('./models/campground');
-const methodOverride = require("method-override")
+const methodOverride = require("method-override");
+const { nextTick } = require("process");
 const port = 3000;
 
 //initial connection error
@@ -32,6 +33,17 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({extended: true}));
 app.use(methodOverride('_method'));
 
+// app.use((req, res, next) => {
+//     console.log(req.method, req.path);
+//     console.log('============')
+//     console.log(req.body)
+//     if(req.body.campground){
+//         console.log(req.body.campground._id)
+//     }
+//     // console.log(`req id ${req.body.campground._id}`)
+//     next()
+// })
+
 app.get('/', (req, res) =>{
     res.render('home')
 })
@@ -43,11 +55,12 @@ app.get('/campgrounds', async (req, res) => {
     
 })
 
-//create route
+//showing the form
 app.get('/campgrounds/new', (req, res) => {
     res.render('campgrounds/new')
 })
 
+//sending the payload to the server
 app.post('/campgrounds', async (req, res) => {
     const campground = new Campground(req.body.campground);
     await campground.save();
