@@ -64,12 +64,16 @@ app.get('/campgrounds/new', (req, res) => {
 
 //sending the payload to the server
 app.post('/campgrounds', catchAsync(async (req, res, next) => {
-    if(!req.body.campground){
-        throw new ExpressError('Invalid Campground Data', 400)
-    }
+    if(!req.body.campground) throw new ExpressError('Invalid Campground Data', 400);
+        // console.log(req.body);
+        // console.log('------');
+        // console.log(req.body.campground);
+    // console.log('***8');
+    // console.log(req.body.campground);
+
     const campground = new Campground(req.body.campground);
     await campground.save();
-    res.redirect(`/campgrounds/${campground._id}`)
+    res.redirect(`/campgrounds/${campground._id}`);
 }))
 
 //show a single campground
@@ -103,8 +107,9 @@ app.all('*', (req, res, next) => {
 })
 
 app.use((err, req, res, next) => {
-    const {statusCode = 500, message = 'Something went wrong'} = err;
-    res.status(statusCode).send(message)
+    const {statusCode = 500} = err;
+    if(!err.message) err.message = 'Oh No, Something Went Wrong!'
+    res.status(statusCode).render('error', {err})
 })
 
 //=================================
