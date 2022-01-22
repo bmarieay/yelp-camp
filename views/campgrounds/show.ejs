@@ -26,7 +26,7 @@
       </div>
     </div>
     <h2>Leave a Review</h2>
-    <form action="" class="mb-3">
+    <form action="/campgrounds/<%= campground._id %>/reviews" class="mb-3" method="POST">
       <div class="mb-3">
         <label for="rating" class="form-label">Rating</label>
         <input type="range" class="form-range" min="1" max="5" name="review[rating]" id="rating">
