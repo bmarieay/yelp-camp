@@ -29,7 +29,7 @@ db.once("open", () => {
     console.log("Database connected");
 });
 
-app.engine('ejs', ejsMate);
+app.engine('ejs', ejsMate);//for boilerplate embedding
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -37,7 +37,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({extended: true}));
 app.use(methodOverride('_method'));
 
-//client side validation for campground
+//client side validation for campground w/ Joi
 const validateCampground = (req, res, next) => {
     const {error} = campgroundSchema.validate(req.body);
     if(error){
@@ -48,7 +48,7 @@ const validateCampground = (req, res, next) => {
     }
 }
 
-//client side validation for reviewss
+//client side validation for reviewss w/ Joi
 const validateReview = (req, res, next) => {
     const {error} = reviewsSchema.validate(req.body);
     if(error){
@@ -76,10 +76,11 @@ app.get('/campgrounds/new', (req, res) => {
     res.render('campgrounds/new')
 })
 
+/*ALL ASYNC ROUTES ARE WRAPPED W/ CATCHASYNC TO
+AVOID REPETITIVE TRY CATCHING*/
+
 //sending the payload to the server
 app.post('/campgrounds', validateCampground, catchAsync(async (req, res, next) => {
-    // if(!req.body.campground) throw new ExpressError('Invalid Campground Data', 400);
-    
     const campground = new Campground(req.body.campground);
     await campground.save();
     res.redirect(`/campgrounds/${campground._id}`);
@@ -88,8 +89,7 @@ app.post('/campgrounds', validateCampground, catchAsync(async (req, res, next) =
 //show a single campground
 app.get('/campgrounds/:id', catchAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id)
-        .populate('reviews');
-    console.log(campground);
+        .populate('reviews');//to also show reviews inside campground
     res.render('campgrounds/show', {campground});
 }))
 
@@ -102,13 +102,14 @@ app.get('/campgrounds/:id/edit', catchAsync(async (req, res) => {
 //add a campground to the server
 app.put('/campgrounds/:id', validateCampground, catchAsync(async (req, res) => {
     const {id} = req.params;
-    const campground = await Campground.findByIdAndUpdate(id, {...req.body.campground});
+    const campground = await Campground.findByIdAndUpdate(id, {...req.body.campground});//spread each properties
     res.redirect(`/campgrounds/${campground._id}`)
 }))
 
 //delete a campground
 app.delete('/campgrounds/:id', catchAsync(async (req, res) => {
     const {id} = req.params;
+    //has mongoose middleware associated with it
     await Campground.findByIdAndDelete(id);
     res.redirect('/campgrounds');
 }))
@@ -123,18 +124,21 @@ app.post('/campgrounds/:id/reviews', validateReview, catchAsync(async (req, res)
     res.redirect(`/campgrounds/${campground._id}`);
 }))
 
-
+//delete a review in a campground
 app.delete('/campgrounds/:id/reviews/:reviewId', catchAsync(async(req, res) => {
     const {id, reviewId} = req.params;
+    //delete matching review in campground
     await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewId } })
     await Review.findByIdAndDelete(reviewId);
     res.redirect(`/campgrounds/${id}`);
 }))
 
+//all routes not hit (not found)
 app.all('*', (req, res, next) => {
     next(new ExpressError('Page not Found', 404))
 })
 
+//custom error handler
 app.use((err, req, res, next) => {
     const {statusCode = 500} = err;
     if(!err.message) err.message = 'Oh No, Something Went Wrong!'
