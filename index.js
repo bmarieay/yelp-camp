@@ -7,6 +7,7 @@ const ExpressError = require('./utility/ExpressError');
 const methodOverride = require("method-override");
 // const { nextTick } = require("process");
 const session = require('express-session')
+const flash = require('connect-flash')
 const port = 3000;
 
 const campgrounds = require('./routes/campgrounds')
@@ -48,8 +49,12 @@ const sessionConfig = {
     }
 }
 app.use(session(sessionConfig))
+app.use(flash())
 
-
+app.use((req, res, next) => {
+    res.locals.success = req.flash('success');
+    next();
+})
 
 app.use('/campgrounds', campgrounds);
 app.use('/campgrounds/:id/reviews', reviews);//need mergeparams here
