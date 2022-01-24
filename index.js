@@ -34,6 +34,7 @@ app.set('views', path.join(__dirname, 'views'));
 //for parsing the body
 app.use(express.urlencoded({extended: true}));
 app.use(methodOverride('_method'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 
 
