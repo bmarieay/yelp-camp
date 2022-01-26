@@ -8,10 +8,14 @@ const methodOverride = require("method-override");
 // const { nextTick } = require("process");
 const session = require('express-session')
 const flash = require('connect-flash')
+const passport = require("passport");
+const LocalStrategy = require("passport-local")
+const User = require('./models/user')
 const port = 3000;
 
-const campgrounds = require('./routes/campgrounds')
-const reviews = require('./routes/reviews')
+const userRoutes = require('./routes/users')
+const campgroundRoutes = require('./routes/campgrounds')
+const reviewRoutes = require('./routes/reviews')
 //initial connection error
 mongoose.connect('mongodb://localhost:27017/yelp-camp')
     .then(() => {
@@ -50,21 +54,38 @@ const sessionConfig = {
 }
 app.use(session(sessionConfig))
 app.use(flash())
+//authentication
+app.use(passport.initialize())
+app.use(passport.session())
+passport.use(new LocalStrategy(User.authenticate()));
+
+passport.serializeUser(User.serializeUser());//tells how the user will be included in the session
+passport.deserializeUser(User.deserializeUser());//opposite of above
 
 app.use((req, res, next) => {
+    if(!['/login', '/'].includes(req.originalUrl)){
+        req.session.returnTo = req.originalUrl;
+    }
+    res.locals.currentUser = req.user;
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
     next();
 })
 
-app.use('/campgrounds', campgrounds);
-app.use('/campgrounds/:id/reviews', reviews);//need mergeparams here
+app.use('/', userRoutes);
+app.use('/campgrounds', campgroundRoutes);
+app.use('/campgrounds/:id/reviews', reviewRoutes);//need mergeparams here
 
 
 app.get('/', (req, res) =>{
-    res.render('home')
+    res.render('home');
 })
 
+app.get('/fakeUser', async(req, res) => {
+    const user = new User({email: 'marie@gmai.com', username: 'mariii'})
+    const newUser = await User.register(user, 'chicken');//will include salt and hashing
+    res.send(newUser)
+})
 //show campgrounds route
 
 
