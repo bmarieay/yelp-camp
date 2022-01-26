@@ -1,22 +1,9 @@
 const express = require("express");
 const router = express.Router({ mergeParams: true });
-
 const Campground = require('../models/campground');
 const Review = require('../models/review');
-
-const ExpressError = require('../utility/ExpressError');
 const catchAsync = require('../utility/catchAsync');
-const {reviewsSchema} = require('../schemas')
-//client side validation for reviewss w/ Joi
-const validateReview = (req, res, next) => {
-    const {error} = reviewsSchema.validate(req.body);
-    if(error){
-        const msg = error.details.map(el => el.message).join(',')
-        throw new ExpressError(msg, 400)
-    } else {
-        next();
-    }
-}
+const {validateReview} = require('../middleware')
 
 
 //make a review associated with a campground
