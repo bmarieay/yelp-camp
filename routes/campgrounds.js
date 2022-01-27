@@ -14,11 +14,8 @@ router.route('/')
     //show the campgrounds
     .get(catchAsync(campgrounds.index))
     //sending the payload to the server
-    // .post(isLoggedIn, validateCampground, catchAsync(campgrounds.createCamground));
-    .post(upload.array('image'),(req, res) => {
-        console.log(req.body, req.files)
-        res.send('it worked')
-    })
+    .post(isLoggedIn, upload.array('image'), validateCampground,  catchAsync(campgrounds.createCamground));
+
 //showing the form
 router.get('/new', isLoggedIn, campgrounds.renderNewForm)
 
