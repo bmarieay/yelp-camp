@@ -3,7 +3,9 @@ const router = express.Router();
 const catchAsync = require('../utility/catchAsync');
 const {isLoggedIn, validateCampground, isAuthor} = require('../middleware')
 const campgrounds = require("../controllers/campgrounds")
-
+const multer = require("multer")//adds file body to request
+const {storage} = require("../cloudinary")
+const upload = multer({storage})
 
 /*ALL ASYNC ROUTES ARE WRAPPED W/ CATCHASYNC TO
 AVOID REPETITIVE TRY CATCHING*/
@@ -12,8 +14,11 @@ router.route('/')
     //show the campgrounds
     .get(catchAsync(campgrounds.index))
     //sending the payload to the server
-    .post(isLoggedIn, validateCampground, catchAsync(campgrounds.createCamground));
-
+    // .post(isLoggedIn, validateCampground, catchAsync(campgrounds.createCamground));
+    .post(upload.array('image'),(req, res) => {
+        console.log(req.body, req.files)
+        res.send('it worked')
+    })
 //showing the form
 router.get('/new', isLoggedIn, campgrounds.renderNewForm)
 
