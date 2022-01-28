@@ -1,20 +1,41 @@
 <% layout('layouts/boilerplate') %>
 <link rel="stylesheet" href="/stylesheets/stars.css">
 <div class="row">
-
-  <!-- Campground Section -->
   <div class="col-6">
-    <div class="card mb-3">
-      <img src="<%= campground.image %>"  class="card-img-top" >
-      <div class="card-body">
+    <!-- Campground Image Section -->
+    <div id="carouselExampleControls" class="carousel slide carousel-fade" data-bs-ride="carousel">
+
+      <div class="carousel-inner">
+        <% campground.images.forEach((img, i) => { %>
+          <div class="carousel-item <%= i === 0 ? 'active' : ''%> ">
+            <img src="<%= img.url %>" class="card-img-top" alt="">
+          </div>
+          <% }) %>
+      </div>
+      <% if(campground.images.length > 1){ %>
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+      <% } %>
+    </div>
+      <!-- Campground Description Section -->
+      <div class="card mb-3">
+        <div class="card-body">
         <h5 class="card-title"><%= campground.title %></h5>
         <p class="card-text"><%= campground.description %>"</p>
       </div>
+
       <ul class="list-group list-group-flush">
         <li class="list-group-item text-muted"><%= campground.location %></li>
         <li class="list-group-item">Submitted by <%= campground.author.username %></li>
         <li class="list-group-item">$<%= campground.price %>/night</li>
       </ul>
+
       <% if(currentUser && campground.author.equals(currentUser._id)){ %> 
         <div class="card-body">
           <a href="/campgrounds/<%= campground._id%>/edit" class="btn btn-info card-link">Edit</a>
@@ -23,11 +44,14 @@
         </form>
         </div>
       <% } %> 
+
       <div class="card-footer text-muted">
         2 days ago
         <a href="/campgrounds">All Campgrounds</a>
       </div>
+
     </div>
+    
   </div>
 
   <!-- Reviews Section -->
