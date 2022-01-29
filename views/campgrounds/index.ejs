@@ -31,7 +31,8 @@
 
     <script>
         const mapToken = '<%- process.env.MAPBOX_TOKEN %>';
+        //map will be looking for features to search from
         const campgrounds = {features: <%- JSON.stringify(campgrounds) %>};
-      </script>
+    </script>
       
-      <script src="/javascripts/clusterMap.js"></script>
+    <script src="/javascripts/clusterMap.js"></script>

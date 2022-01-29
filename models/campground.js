@@ -8,11 +8,12 @@ const ImageSchema = new Schema({
     filename: String
 })
 
+//note: this is solely for image property, not the campground itself
 ImageSchema.virtual('thumbnail').get(function () {
     return this.url.replace('/upload', '/upload/w_200')
 })
 
-const opts = { toJSON: { virtuals: true }}
+const opts = { toJSON: { virtuals: true }}//include the properties virtual in schema obj
 
 //basic model
 const CampgroundSchema = new Schema({
@@ -25,7 +26,7 @@ const CampgroundSchema = new Schema({
             required: true
         },
         coordinates: {
-            type: [Number],
+            type: [Number],//long and latitude
             required: true
         }
     },
