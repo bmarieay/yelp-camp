@@ -18,6 +18,9 @@ const port = 3000;
 const userRoutes = require('./routes/users')
 const campgroundRoutes = require('./routes/campgrounds')
 const reviewRoutes = require('./routes/reviews')
+
+const mongoSanitize = require('express-mongo-sanitize');
+
 //initial connection error
 mongoose.connect('mongodb://localhost:27017/yelp-camp')
     .then(() => {
@@ -43,6 +46,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({extended: true}));
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(mongoSanitize());
 
 const sessionConfig = {
     secret: 'thisissecret',
