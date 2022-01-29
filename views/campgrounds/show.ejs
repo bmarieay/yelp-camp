@@ -2,6 +2,7 @@
 <link rel="stylesheet" href="/stylesheets/stars.css">
 <div class="row">
   <div class="col-6">
+    
     <!-- Campground Image Section -->
     <div id="carouselExampleControls" class="carousel slide carousel-fade" data-bs-ride="carousel">
 
@@ -55,8 +56,9 @@
   </div>
 
   <!-- Reviews Section -->
-  <% if(currentUser){ %> 
-    <div class="col-6">
+  <div class="col-6">
+    <div id='map' style='width: 100%; height: 300px;'></div>
+      <% if(currentUser){ %> 
       <h2>Leave a Review</h2>
         <!-- Input Review Section -->
         <form action="/campgrounds/<%= campground._id %>/reviews" class="validated-form mb-3" method="POST" novalidate>
@@ -101,7 +103,15 @@
           </div>
         </div>
         <% } %>
+      <% } %> 
     </div>
-  <% } %> 
 </div>
+
+<script>
+  const mapToken = '<%- process.env.MAPBOX_TOKEN %>';
+  const campground = <%- JSON.stringify(campground) %>;
+</script>
+
+<script src="/javascripts/showMap.js"></script>
+
 
