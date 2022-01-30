@@ -38,3 +38,10 @@ body{
 footer{
     margin-top: 2rem;
 }
+
+@media(max-width: 768px){
+    .nav-link{
+        margin-left: 0;
+        width: max-content;
+    }
+}
