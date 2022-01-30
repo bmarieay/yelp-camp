@@ -23,8 +23,12 @@ const reviewRoutes = require('./routes/reviews')
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require("helmet");
 
+const MongoDBStore = require("connect-mongo");
+
+const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp';
+
 //initial connection error
-mongoose.connect('mongodb://localhost:27017/yelp-camp')
+mongoose.connect(dbUrl)
     .then(() => {
         console.log('CONNECTION MONGO OPEN!!!')
     })
@@ -94,11 +98,24 @@ app.use(
         },
     })
 );
+// https://ancient-coast-27349.herokuapp.com/
+const secret = process.env.SECRET || 'squirrel';
+const store = MongoDBStore.create({
+    mongoUrl: dbUrl,
+    touchAfter: 24 * 60 * 60,
+    crypto: {
+        secret
+    }
+});
 
+store.on("error", function(e){
+    console.log('SESSION STORE ERROR', e)
+})
 
 const sessionConfig = {
+    store,
     name: 'sess',
-    secret: 'thisissecret',
+    secret,
     resave: false,
     saveUninitialized: true,
     cookie: {
