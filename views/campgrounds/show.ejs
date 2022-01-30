@@ -1,7 +1,7 @@
 <% layout('layouts/boilerplate') %>
 <link rel="stylesheet" href="/stylesheets/stars.css">
 <div class="row">
-  <div class="col-6">
+  <div class="col-md-6">
     
     <!-- Campground Image Section -->
     <div id="carouselExampleControls" class="carousel slide carousel-fade" data-bs-ride="carousel">
@@ -56,12 +56,12 @@
   </div>
 
   <!-- Reviews Section -->
-  <div class="col-6">
+  <div class="col-md-6">
     <div id='map'></div>
       <% if(currentUser){ %> 
       <h2>Leave a Review</h2>
         <!-- Input Review Section -->
-        <form action="/campgrounds/<%= campground._id %>/reviews" class="validated-form mb-3" method="POST" novalidate>
+        <form action="/campgrounds/<%= campground._id %>/reviews" class="validated-form mb-5" method="POST" novalidate>
           <fieldset class="starability-slot mb-3">
             <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
             <input type="radio" id="first-rate1" name="review[rating]" value="1" />

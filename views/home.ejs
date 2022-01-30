@@ -8,26 +8,32 @@
     <link rel="stylesheet" href="/stylesheets/home.css">
     <title>YelpCamp</title>
 </head>
-<body class="d-flex text-center text-white bg-dark">
-    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+<body class="text-center text-white bg-dark">
+    <div class=" d-flex w-100 h-100 p-3 mx-auto flex-column">
         <header class="mb-auto">
-            <h3 class="float-md-start mb-0">YelpCamp</h3>
-            <nav class="nav nav-masthead justify-content-center float-md-end">
-                <a href="#" class="nav-link active" aria-current="page">Home</a>
-                <a href="/campgrounds" class="nav-link">Campgrounds</a>
-                <% if(!currentUser) {%> 
-                <a href="/login" class="nav-link">Login</a>
-                <a href="/register" class="nav-link">Register</a>
-                <% } else {%> 
-                <a href="/logout" class="nav-link">Logout</a>
-                <% } %> 
+            <nav class="d-flex navbar navbar-dark justify-content-center navbar-expand-md">
+                <h3 class="">YelpCamp</h3>
+                <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <a href="#" class="nav-link active ms-md-auto" aria-current="page">Home</a>
+                    <a href="/campgrounds" class="nav-link">Campgrounds</a>
+                    <% if(!currentUser) {%>
+                    <a href="/login" class="nav-link">Login</a>
+                    <a href="/register" class="nav-link">Register</a>
+                    <% } else {%>
+                    <a href="/logout" class="nav-link">Logout</a>
+                    <% } %>
+                </div>
             </nav>
         </header>
         <main class="px-3">
             <h1>YelpCamp</h1>
             <p class="lead">Welcome to Yelpcamp! <br>Jump right in and explore our many campgrounds. <br>
                 Feel free to share some of your own and comment on others!</p>
-            <a href="/campgrounds" class="btn btn-lg fw-bold bg-white btn-secondary">View Campgrounds</a>
+            <a href="/campgrounds" class="btn btn-md fw-bold bg-white btn-secondary">View Campgrounds</a>
         </main>
 
         <footer class="mt-auto text-white-50">

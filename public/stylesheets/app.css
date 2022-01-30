@@ -1,12 +1,31 @@
+.title {
+    margin-bottom: 2rem;
+}
+
+.gutter{
+    margin-bottom: 1rem;
+}
+
+.container{
+    width: 90%;
+}
 
 #map, #cluster-map{
     width: 100%;
 }
 
 #map{
+    margin: 2rem 0;
     height: 300px;
 }
 
 #cluster-map {
-    height: 500px;
+    height: 300px;
+    margin-bottom: 2.5rem;
+}
+
+@media(min-width: 765px){
+    #map{
+        margin: 0;
+    }
 }
