@@ -1,16 +1,17 @@
 const mongoose = require("mongoose");
-const cities = require('./cities');
-const {places, descriptors} = require('./seedHelpers');
+const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
+require('dotenv').config();
+const mapBoxToken = process.env.MAPBOX_TOKEN;
+const geocoder = mbxGeocoding({ accessToken: mapBoxToken })
+console.log(mapBoxToken)
+mbxGeocoding({ accessToken: mapBoxToken })
 const axios = require("axios")
-if(process.env.NODE_ENV !== "production"){
-    require('dotenv').config();
-}
 
 const key = process.env.API_KEY;
 
 //get the model 
 const Campground = require('../models/campground');
-const campground = require("../models/campground");
+
 
 //initial connection error
 mongoose.connect('mongodb://localhost:27017/yelp-camp')
@@ -47,33 +48,40 @@ const processDatas = async () => {
 
 //pick a rand from array length
 const sample = array => array[Math.floor(Math.random() * array.length)];
- const savedata = async (campground) => {
-        await campground.save;
-}
-const seedDB = async () => {
-    await Campground.deleteMany({});
-    const res = await processDatas();
-    // for(let camp of res.data.data){
-    //     console.log(camp.name)
-    // }
-   
+const reverseGeo = async (coordinates) => {
+    // console.log(coordinates);
+    try {
+        console.log("NOW AT ", coordinates)
+        const geoData = await geocoder.reverseGeocode({
+            query: coordinates,
+            limit: 1
+        }).send()
 
-    res.data.data.forEach( async (camp) => {
-        console.log(camp.name)
+        if(geoData.body.features[0]){
+            return geoData.body.features[0].text;
+        } else{
+            return 'NO LOCATION'
+        }
+    } catch (error) {
+        console.log("ERROR!:", error)
+    }
+}
+
+const seedDB = async () => {
+    try {
+        await Campground.deleteMany({});
+        const res = await processDatas();
+        //add each res
+        res.data.data.forEach( async (camp) => {
         const price = Math.floor(Math.random() * 20) + 10;
         const campground = new Campground({
             author: '61f19eecbf9c697d0cb968b6',
-
+            //do reverse lookup here!!!!!from the coordinates if no address available
             location: camp.addresses[0] ? 
                 `${camp.addresses[0].line1} ${camp.addresses[0].city} ${camp.addresses[0].stateCode}`: 
-                'No Location Found',
+               await reverseGeo([Number.parseFloat( camp.longitude, 10), Number.parseFloat( camp.latitude, 10)]),
             title: camp.name,
             description: camp.description,
-            // if(camp.fees[0].cost){
-            //     price: camp.fees[0].cost
-            // } else {
-            //     price
-            // }
             price: camp.fees[0] ? camp.fees[0].cost : price,
             geometry: {
                 type: 'Point',
@@ -82,49 +90,26 @@ const seedDB = async () => {
                     camp.latitude
                 ]
             },
-            images: [
-                {
-                    url: camp.images[0] ? camp.images[0].url : ''
-                }
-            ]
+            images: camp.images.map(c => ({ url: c.url}))
+            
+            // [
+            //     camp.images.map(c => ({ url: c.url}))
+            //     // {
+            //     //     url: camp.images[0] ? camp.images[0].url : ''
+            //     // }
+            // ]
         }) 
         await campground.save();
-        // savedata(campground);
     })
-    // for(let i = 0; i < 200; i++){
-    //     const random1000 = Math.floor(Math.random() * 1000);
-    //     const price = Math.floor(Math.random() * 20) + 10;
-    //     const camp = new Campground({
-    //         //MY USER ID
-    //         author: '61f19eecbf9c697d0cb968b6',
-    //         location: `${cities[random1000].city}, ${cities[random1000].state}`,
-    //         title: `${sample(descriptors)} ${sample(places)}`,
-    //         description: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Fugiat iusto quo ducimus ab, iste libero quibusdam expedita laudantium temporibus consequatur nemo eos, magni quis? Aliquid obcaecati quaerat placeat blanditiis deleniti!',
-    //         price,
-    //         geometry: {
-    //             type: 'Point',
-    //             coordinates: [
-    //                 cities[random1000].longitude,
-    //                 cities[random1000].latitude,
-
-    //             ]
-    //         },
-    //         images:  [
-    //             {
-    //               url: 'https://res.cloudinary.com/maranttt/image/upload/v1643324249/YelpCamp/yybnzvyjcls8lk5ucve7.jpg',
-    //               filename: 'YelpCamp/yybnzvyjcls8lk5ucve7'
-    //             },
-    //             {
-    //               url: 'https://res.cloudinary.com/maranttt/image/upload/v1643324252/YelpCamp/uecxe5koy8ceyy9qvyof.jpg',
-    //               filename: 'YelpCamp/uecxe5koy8ceyy9qvyof'
-    //             }
-    //         ]
-    //     })
-    //     await camp.save();
-    // }
+    } catch (error) {
+        console.log("TIMEOUT:", error)
+    }
 }
 
-seedDB().then(() => {//close the database after running asyn generator above
-    // mongoose.connection.close();
-    console.log('done')
-})
+seedDB()
+    .then(() => {
+        console.log('done')
+    })
+    .catch(e => {
+        console.log("ERROR SEEDING", e)
+    })

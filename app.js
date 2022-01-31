@@ -9,7 +9,6 @@ const mongoose = require("mongoose");
 const ejsMate = require("ejs-mate");
 const ExpressError = require('./utility/ExpressError');
 const methodOverride = require("method-override");
-const axios = require("axios")
 const session = require('express-session')
 const flash = require('connect-flash')
 const passport = require("passport");
@@ -62,6 +61,8 @@ const scriptSrcUrls = [
     "https://kit.fontawesome.com",
     "https://cdnjs.cloudflare.com",
     "https://cdn.jsdelivr.net",
+    "https://www.nps.gov"
+    
 ];
 const styleSrcUrls = [
     "https://kit-free.fontawesome.com",
@@ -70,12 +71,15 @@ const styleSrcUrls = [
     "https://api.tiles.mapbox.com",
     "https://fonts.googleapis.com",
     "https://use.fontawesome.com",
-    "https://cdn.jsdelivr.net"
+    "https://cdn.jsdelivr.net",
+    "https://www.nps.gov"
+    
 ];
 const connectSrcUrls = [
     "https://api.mapbox.com",
     "https://*.tiles.mapbox.com",
     "https://events.mapbox.com",
+    "https://www.nps.gov"
 ];
 const fontSrcUrls = [];
 app.use(
@@ -94,6 +98,7 @@ app.use(
                 "data:",
                 "https://res.cloudinary.com/maranttt/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT! 
                 "https://images.unsplash.com",
+                "https://www.nps.gov/"
             ],
             fontSrc: ["'self'", ...fontSrcUrls],
         },

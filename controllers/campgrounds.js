@@ -13,6 +13,8 @@ module.exports.index = async (req, res) => {
 module.exports.renderNewForm = (req, res) => {
     res.render('campgrounds/new')
 }
+//cut description if long
+//fix images
 
 module.exports.createCamground = async (req, res, next) => {
     const geoData = await geocoder.forwardGeocode({
@@ -21,11 +23,10 @@ module.exports.createCamground = async (req, res, next) => {
     }).send()
     const campground = new Campground(req.body.campground);
     campground.geometry = geoData.body.features[0].geometry;
-    //req.files is an array added from multer
+    // req.files is an array added from multer
     campground.images = req.files.map(f => ({ url: f.path, filename: f.filename }))
     campground.author = req.user._id;
     await campground.save();
-    console.log(campground)
     req.flash('success', 'Successfully made a new campground!');
     res.redirect(`/campgrounds/${campground._id}`);
 }
@@ -78,6 +79,11 @@ module.exports.editCampground = async (req, res) => {
 module.exports.deleteCampground = async (req, res) => {
     const {id} = req.params;
     //has mongoose middleware associated with it
+    const camp = await Campground.findById(id)
+
+    for(let image of camp.images){//delete associated images in cloud
+        await cloudinary.uploader.destroy(image.filename)
+    }
     await Campground.findByIdAndDelete(id);
     req.flash('success', 'Successfully deleted campground!')
     res.redirect('/campgrounds');
