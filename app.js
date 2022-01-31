@@ -97,7 +97,7 @@ app.use(
         },
     })
 );
-// https://ancient-coast-27349.herokuapp.com/
+
 const secret = process.env.SECRET || 'squirrel';
 const store = MongoDBStore.create({
     mongoUrl: dbUrl,
