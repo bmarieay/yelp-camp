@@ -22,6 +22,11 @@ module.exports.createCamground = async (req, res, next) => {
         limit: 1
     }).send()
     const campground = new Campground(req.body.campground);
+    //validate location
+    if(!geoData.body.features[0]){
+        req.flash('error', 'Please enter a valid location')
+        return res.redirect('/campgrounds/new')
+    }
     campground.geometry = geoData.body.features[0].geometry;
     // req.files is an array added from multer
     campground.images = req.files.map(f => ({ url: f.path, filename: f.filename }))
