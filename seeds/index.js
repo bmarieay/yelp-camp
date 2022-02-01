@@ -3,15 +3,12 @@ const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
 require('dotenv').config();
 const mapBoxToken = process.env.MAPBOX_TOKEN;
 const geocoder = mbxGeocoding({ accessToken: mapBoxToken })
-console.log(mapBoxToken)
 mbxGeocoding({ accessToken: mapBoxToken })
 const axios = require("axios")
-
 const key = process.env.API_KEY;
 
 //get the model 
 const Campground = require('../models/campground');
-
 
 //initial connection error
 mongoose.connect('mongodb://localhost:27017/yelp-camp')
@@ -30,6 +27,7 @@ db.once("open", () => {
     console.log("Database connected");
 });
 
+//get seeding data from nps api
 const processDatas = async () => {
     try{
         const config = {
@@ -46,15 +44,11 @@ const processDatas = async () => {
     }
 }
 
-//pick a rand from array length
-const sample = array => array[Math.floor(Math.random() * array.length)];
 const reverseGeo = async (coordinates) => {
-    // console.log(coordinates);
     try {
-        console.log("NOW AT ", coordinates)
         const geoData = await geocoder.reverseGeocode({
             query: coordinates,
-            limit: 1
+            limit: 1    
         }).send()
 
         if(geoData.body.features[0]){
@@ -73,34 +67,36 @@ const seedDB = async () => {
         const res = await processDatas();
         //add each res
         res.data.data.forEach( async (camp) => {
-        const price = Math.floor(Math.random() * 20) + 10;
-        const campground = new Campground({
-            author: '61f19eecbf9c697d0cb968b6',
-            //do reverse lookup here!!!!!from the coordinates if no address available
-            location: camp.addresses[0] ? 
-                `${camp.addresses[0].line1} ${camp.addresses[0].city} ${camp.addresses[0].stateCode}`: 
-               await reverseGeo([Number.parseFloat( camp.longitude, 10), Number.parseFloat( camp.latitude, 10)]),
-            title: camp.name,
-            description: camp.description,
-            price: camp.fees[0] ? camp.fees[0].cost : price,
-            geometry: {
-                type: 'Point',
-                coordinates: [
-                    camp.longitude,
-                    camp.latitude
-                ]
-            },
-            images: camp.images.map(c => ({ url: c.url}))
-            
-            // [
-            //     camp.images.map(c => ({ url: c.url}))
-            //     // {
-            //     //     url: camp.images[0] ? camp.images[0].url : ''
-            //     // }
-            // ]
-        }) 
-        await campground.save();
-    })
+            if(camp.images[0]){
+                const price = Math.floor(Math.random() * 20) + 10;
+                const campground = new Campground({
+                author: '61f19eecbf9c697d0cb968b6',
+                //do reverse lookup here!!!!!from the coordinates if no address available
+                location: camp.addresses[0] ? 
+                    `${camp.addresses[0].line1} ${camp.addresses[0].city} ${camp.addresses[0].stateCode}`: 
+                    await reverseGeo([Number.parseFloat( camp.longitude, 10), Number.parseFloat( camp.latitude, 10)]),
+
+                title: camp.name,
+
+                description: camp.description,
+                //assign a random price if there is no cost
+                price: camp.fees[0] ? camp.fees[0].cost : price,
+
+                geometry: {
+                    type: 'Point',
+                    coordinates: [
+                        camp.longitude,
+                        camp.latitude
+                    ]
+                },
+
+                images: camp.images.map(c => ({ url: c.url}))
+                }) 
+
+                await campground.save();
+            }
+        })
+
     } catch (error) {
         console.log("TIMEOUT:", error)
     }

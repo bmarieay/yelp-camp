@@ -61,8 +61,6 @@ const scriptSrcUrls = [
     "https://kit.fontawesome.com",
     "https://cdnjs.cloudflare.com",
     "https://cdn.jsdelivr.net",
-    "https://www.nps.gov"
-    
 ];
 const styleSrcUrls = [
     "https://kit-free.fontawesome.com",
@@ -72,7 +70,6 @@ const styleSrcUrls = [
     "https://fonts.googleapis.com",
     "https://use.fontawesome.com",
     "https://cdn.jsdelivr.net",
-    "https://www.nps.gov"
     
 ];
 const connectSrcUrls = [
