@@ -9,6 +9,7 @@
 .container{
     width: 90%;
 }
+
 #map, #cluster-map{
     width: 100%;
 }
