@@ -6,6 +6,7 @@ const geocoder = mbxGeocoding({ accessToken: mapBoxToken })
 mbxGeocoding({ accessToken: mapBoxToken })
 const axios = require("axios")
 const key = process.env.API_KEY;
+const mainAuth = process.env.OWNER_ID;
 
 //get the model 
 const Campground = require('../models/campground');
@@ -71,7 +72,7 @@ const seedDB = async () => {
             if(camp.images[0]){
                 const price = Math.floor(Math.random() * 20) + 10;
                 const campground = new Campground({
-                author: '61f19eecbf9c697d0cb968b6',
+                author: mainAuth,
                 //do reverse lookup here!!!!!from the coordinates if no address available
                 location: camp.addresses[0] ? 
                     `${camp.addresses[0].line1} ${camp.addresses[0].city} ${camp.addresses[0].stateCode}`: 
