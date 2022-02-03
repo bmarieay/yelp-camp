@@ -51,8 +51,9 @@ module.exports.showUserCampgrounds = async (req, res) => {
     //get the user and populate it
     const user = await User.findById(req.user)
         .populate('campgrounds');
-
-    res.send(user);
+    const campgrounds = user.campgrounds;
+    // res.send(campgrounds);
+    res.render('campgrounds/index', {campgrounds})
 }
 
 module.exports.showCampground = async (req, res) => {

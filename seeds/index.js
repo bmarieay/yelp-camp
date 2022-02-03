@@ -66,12 +66,14 @@ const reverseGeo = async (coordinates) => {
 }
 
 const seedDB = async () => {
-    const author = await User.findById(mainAuth);
+    // const author = await User.findById(mainAuth);
+    User.findByIdAndUpdate(mainAuth, {$set: {campgrounds: []}});
     try {
         await Campground.deleteMany({});
 
+
         const res = await processDatas();
-        console.log(author)
+        // console.log(author)
         //add each res
         res.data.data.forEach( async (camp) => {
             if(camp.images[0]){

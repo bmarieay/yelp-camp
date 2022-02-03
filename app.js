@@ -14,6 +14,7 @@ const flash = require('connect-flash')
 const passport = require("passport");
 const LocalStrategy = require("passport-local")
 const User = require('./models/user')
+const Campground = require('./models/campground')
 
 const userRoutes = require('./routes/users')
 const campgroundRoutes = require('./routes/campgrounds')
