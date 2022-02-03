@@ -103,13 +103,22 @@ module.exports.editCampground = async (req, res) => {
 module.exports.deleteCampground = async (req, res) => {
     const {id} = req.params;
     //has mongoose middleware associated with it
-    const camp = await Campground.findById(id)
+    const deletedCampground = await Campground.findByIdAndDelete(id);
+    // const camp = await Campground.findById(id)
+    // const ownerUser = await User.findById(deletedCampground.author._id);
+    // console.log("OWNER IS before deletion: ", ownerUser);
 
-    for(let image of camp.images){//delete associated images in cloud
+    for(let image of deletedCampground.images){//delete associated images in cloud
         await cloudinary.uploader.destroy(image.filename)
     }
+
     //also delete camp id from associated user
-    await Campground.findByIdAndDelete(id);
+    // await ownerUser.updateOne({$pull: {campgrounds: {_id: camp._id}}});
+    const user = await User.findByIdAndUpdate(deletedCampground.author, { $pull: {campgrounds: id} }, {new: true})
+
+
+    console.log("OWNER IS AFTER DELETION: ", user);
+    
     req.flash('success', 'Successfully deleted campground!')
     res.redirect('/campgrounds');
 }

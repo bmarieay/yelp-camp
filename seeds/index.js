@@ -10,6 +10,8 @@ const mainAuth = process.env.OWNER_ID;
 
 //get the model 
 const Campground = require('../models/campground');
+const User = require('../models/user');
+const campground = require("../models/campground");
 
 //initial connection error
 const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp';
@@ -64,9 +66,12 @@ const reverseGeo = async (coordinates) => {
 }
 
 const seedDB = async () => {
+    const author = await User.findById(mainAuth);
     try {
         await Campground.deleteMany({});
+
         const res = await processDatas();
+        console.log(author)
         //add each res
         res.data.data.forEach( async (camp) => {
             if(camp.images[0]){
@@ -95,6 +100,9 @@ const seedDB = async () => {
                 images: camp.images.map(c => ({ url: c.url}))
                 }) 
 
+                await User.findByIdAndUpdate(mainAuth, {$push:{campgrounds: campground}})
+                // author.campgrounds.push(campground);//link the user to seeded data
+                // console.log(author.campgrounds)
                 await campground.save();
             }
         })
