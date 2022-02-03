@@ -15,6 +15,11 @@ router.route('/')
     .get(catchAsync(campgrounds.index))
     //sending the payload to the server
     .post(isLoggedIn, upload.array('image'), validateCampground,  catchAsync(campgrounds.createCamground));
+    
+router.route('/user')//campgrounds/user
+//check if user is logged in then show all owned campgrounds populated
+    .get(isLoggedIn,catchAsync(campgrounds.showUserCampgrounds));
+    
 
 //showing the form
 router.get('/new', isLoggedIn, campgrounds.renderNewForm)

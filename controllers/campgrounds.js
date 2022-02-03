@@ -1,4 +1,5 @@
 const Campground = require("../models/campground")
+const User = require("../models/user")
 const { cloudinary } = require("../cloudinary")
 const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
 const mapBoxToken = process.env.MAPBOX_TOKEN;
@@ -22,6 +23,8 @@ module.exports.createCamground = async (req, res, next) => {
         limit: 1
     }).send()
     const campground = new Campground(req.body.campground);
+    //get user to associate the newly created camp
+    const loggedUser = await User.findById(req.user._id);
     //validate location
     if(!geoData.body.features[0]){
         req.flash('error', 'Please enter a valid location')
@@ -30,10 +33,26 @@ module.exports.createCamground = async (req, res, next) => {
     campground.geometry = geoData.body.features[0].geometry;
     // req.files is an array added from multer
     campground.images = req.files.map(f => ({ url: f.path, filename: f.filename }))
-    campground.author = req.user._id;
+    campground.author = loggedUser;
+
+    //push newly created campground to user
+    console.log("before", loggedUser)
+    loggedUser.campgrounds.push(campground._id);
+    
+    console.log("after", loggedUser)
     await campground.save();
+    await loggedUser.save();
+    // console.log(loggedUser);
     req.flash('success', 'Successfully made a new campground!');
     res.redirect(`/campgrounds/${campground._id}`);
+}
+
+module.exports.showUserCampgrounds = async (req, res) => {
+    //get the user and populate it
+    const user = await User.findById(req.user)
+        .populate('campgrounds');
+
+    res.send(user);
 }
 
 module.exports.showCampground = async (req, res) => {
@@ -89,6 +108,7 @@ module.exports.deleteCampground = async (req, res) => {
     for(let image of camp.images){//delete associated images in cloud
         await cloudinary.uploader.destroy(image.filename)
     }
+    //also delete camp id from associated user
     await Campground.findByIdAndDelete(id);
     req.flash('success', 'Successfully deleted campground!')
     res.redirect('/campgrounds');

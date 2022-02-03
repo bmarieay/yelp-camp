@@ -8,7 +8,13 @@ const UserSchema = new Schema({
         type: String,
         required: true,
         unique: true
-    }
+    },
+    campgrounds: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Campground'
+        }
+    ]
 });
 
 UserSchema.plugin(passportLocalMongoose); //this will include username & password
