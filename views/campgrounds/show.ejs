@@ -9,7 +9,7 @@
       <div class="carousel-inner">
         <% campground.images.forEach((img, i) => { %>
           <div class="carousel-item <%= i === 0 ? 'active' : ''%> ">
-            <img src="<%=img.url.includes('cloudinary')? img.showSize : img.url %>" class="card-img-top" alt="">
+            <img src="<%=img.url.includes('cloudinary')? img.showSize : img.url %>" class="img-fluid" alt="">
           </div>
           <% }) %>
       </div>
@@ -58,7 +58,9 @@
   <!-- Reviews Section -->
   <div class="col-md-6">
     <div id='map'></div>
-      <% if(currentUser){ %> 
+      <% if(!currentUser) {%>
+        <p class="lead mt-5 text-center">Please signin or register to submit or view a review</p>
+      <% } else {%>  
       <h2>Leave a Review</h2>
         <!-- Input Review Section -->
         <form action="/campgrounds/<%= campground._id %>/reviews" class="validated-form mb-5" method="POST" novalidate>

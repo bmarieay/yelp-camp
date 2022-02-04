@@ -16,7 +16,7 @@ ImageSchema.virtual('indexSize').get(function () {
     return this.url.replace('/upload', '/upload/w_415,h_280')
 })
 ImageSchema.virtual('showSize').get(function () {
-    return this.url.replace('/upload', '/upload/h_470')
+    return this.url.replace('/upload', '/upload/h_470,w_600')
 })
 
 const opts = { toJSON: { virtuals: true }}//include the properties virtual in schema obj
