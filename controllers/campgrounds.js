@@ -33,6 +33,7 @@ module.exports.createCamground = async (req, res, next) => {
     campground.geometry = geoData.body.features[0].geometry;
     // req.files is an array added from multer
     campground.images = req.files.map(f => ({ url: f.path, filename: f.filename }))
+    
     campground.author = loggedUser;
 
     //push newly created campground to user

@@ -10,6 +10,12 @@
     width: 90%;
 }
 
+.index-img{
+    width: 400px;
+    height: 280px;
+    max-width: 100%;
+}
+
 #map, #cluster-map{
     width: 100%;
 }
