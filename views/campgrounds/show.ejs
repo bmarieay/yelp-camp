@@ -25,16 +25,16 @@
       <% } %>
     </div>
       <!-- Campground Description Section -->
-      <div class="card mb-3">
+      <div class="card mb-3 theme-target">
         <div class="card-body">
-        <h5 class="card-title"><%= campground.title %></h5>
-        <p class="card-text"><%= campground.description %></p>
+        <h5 class="card-title theme-target"><%= campground.title %></h5>
+        <p class="card-text theme-target"><%= campground.description %></p>
       </div>
 
-      <ul class="list-group list-group-flush">
-        <li class="list-group-item text-muted"><%= campground.location %></li>
-        <li class="list-group-item">Submitted by <%= campground.author.username %></li>
-        <li class="list-group-item">$<%= campground.price %>/night</li>
+      <ul class="list-group list-group-flush theme-target">
+        <li class="list-group-item text-muted theme-target"><%= campground.location %></li>
+        <li class="list-group-item theme-target">Submitted by <%= campground.author.username %></li>
+        <li class="list-group-item theme-target">$<%= campground.price %>/night</li>
       </ul>
 
       <% if(currentUser && campground.author.equals(currentUser._id)){ %> 

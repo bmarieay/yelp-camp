@@ -1,5 +1,5 @@
 <% layout('layouts/boilerplate') %>
-<div id="cluster-map"></div>
+<div id="cluster-map" class="border border-dark"></div>
 <h1 class="title">All Campgrounds</h1>
 <div class="gutter">
     <a href="/campgrounds/new">Add Campground</a>
@@ -7,7 +7,7 @@
 
 <!-- show each campground -->
     <% for(let campground of campgrounds) {%>
-        <div class="card mb-3">
+        <div class="card mb-3 border border-secondary rounded rounded-1 theme-target">
             <div class="row">
                 <div class="col-md-4">
                     <% if(campground.images.length) {%>
