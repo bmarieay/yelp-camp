@@ -59,7 +59,7 @@
   <div class="col-md-6">
     <div id='map'></div>
       <% if(!currentUser) {%>
-        <p class="lead mt-5 text-center">Please signin or register to submit or view a review</p>
+        <p class="lead mt-5 text-center mb-4">Please sign in or register to have access to reviews</p>
       <% } else {%>  
       <h2>Leave a Review</h2>
         <!-- Input Review Section -->
@@ -90,7 +90,7 @@
         </form>
         <!-- Show Reviews Section -->
         <% for(let review of campground.reviews){ %>
-        <div class="card mb-3">
+        <div class="card mb-3 theme-target">
           <div class="card-body">
             <h5 class="card-title"><%= review.author.username  %> </h5>
             <p class="starability-result" data-rating="<%= review.rating %>">

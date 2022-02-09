@@ -158,16 +158,6 @@ app.get('/', (req, res) =>{
     res.render('home');
 })
 
-app.get('/fakeUser', async(req, res) => {
-    const user = new User({email: 'marie@gmai.com', username: 'mariii'})
-    const newUser = await User.register(user, 'chicken');//will include salt and hashing
-    res.send(newUser)
-})
-
-
-//show campgrounds route
-
-
 //all routes not hit (not found)
 app.all('*', (req, res, next) => {
     next(new ExpressError('Page not Found', 404))
