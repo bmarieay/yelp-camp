@@ -7,8 +7,33 @@ const geocoder = mbxGeocoding({ accessToken: mapBoxToken })
 mbxGeocoding({ accessToken: mapBoxToken })
 
 module.exports.index = async (req, res) => {
-    const campgrounds = await Campground.find({});
-    res.render('campgrounds/index', {campgrounds});
+    // const campgrounds = await Campground.find({});
+    let {page, size} = req.query;
+    if(!page){
+        page=1;//very first page
+    }
+    if(!size){
+        size=10;
+    }
+    const limit = parseInt(size);
+    const skip = (page - 1) * 10; //resource to be loaded
+    console.log(page, size);
+    // const campgrounds = await Campground.find({}, {}, {limit: limit, skip: skip})
+    const campgrounds = await Campground.find().limit(limit).skip(skip);
+    // res.render('campgrounds/index', {campgrounds});
+    // res.send({//use this idea for dynamic page loading in index file
+    //     page,
+    //     size,
+    //     campgrounds
+    // })
+    //use below to disable next button page
+    if(!campgrounds.length){//if there is no more to load
+        console.log(campgrounds)
+    }
+    //convert to int for the pagination index file
+    page = parseInt(page);
+    size = parseInt(size);
+    res.render('campgrounds/index', {campgrounds, page, size});
 }
 
 module.exports.renderNewForm = (req, res) => {

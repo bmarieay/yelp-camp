@@ -1,9 +1,25 @@
 <% layout('layouts/boilerplate') %>
 <div id="cluster-map" class="border border-dark"></div>
 <h1 class="title">All Campgrounds</h1>
+
+<nav aria-label="Campgrounds navigation pages">
+    <ul class="pagination justify-content-center">
+      <li class="page-item"><a class="page-link" href="/campgrounds?page=<%= page-1 %> ">Previous</a></li>
+      <li class="page-item"><a class="page-link" href="/campgrounds?page=<%= page %>&size=10"><%= page %></a></li>
+      <li class="page-item"><a class="page-link" href="/campgrounds?page=<%= page+1 %>&size=10"><%= page+1 %> </a></li>
+      <li class="page-item"><a class="page-link" href="/campgrounds?page=<%= page+2 %>&size=10"><%= page+2 %> </a></li>
+      <li class="page-item"><a class="page-link" href="/campgrounds?page=<%= page+3 %>&size=10"><%= page+3 %> </a></li>
+      <li class="page-item"><a class="page-link" href="/campgrounds?page=<%= page+4 %>&size=10"><%= page+4 %> </a></li>
+      <li class="page-item"><a class="page-link" href="/campgrounds?page=<%= page+1 %> ">Next</a></li>
+    </ul>
+</nav>
+
+
 <div class="gutter">
     <a href="/campgrounds/new">Add Campground</a>
 </div>
+
+
 
 <!-- show each campground -->
     <% for(let campground of campgrounds) {%>
