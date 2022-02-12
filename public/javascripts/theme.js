@@ -8,12 +8,12 @@ const targets = [...element, ...inner];
 
 function setTheme(mode){
     if(mode === 'dark'){
+        togglerMode.checked = true;
         for(let target of targets){
             target.classList.add(`${mode}-theme`);
         }
         brand.classList.add(`${mode}-theme`)
         themeLabel.innerText = "Light Mode"
-        togglerMode.checked = true;
     }
     if(mode === 'light'){
         for(let target of targets){

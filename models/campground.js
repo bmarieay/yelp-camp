@@ -19,7 +19,10 @@ ImageSchema.virtual('showSize').get(function () {
     return this.url.replace('/upload', '/upload/h_470,w_600')
 })
 
-const opts = { toJSON: { virtuals: true }}//include the properties virtual in schema obj
+const opts = { 
+    toJSON: { virtuals: true },
+    timestamps: true
+}//include the properties virtual in schema obj
 
 //basic model
 const CampgroundSchema = new Schema({
@@ -67,5 +70,7 @@ CampgroundSchema.post('findOneAndDelete', async function(campground){
         })
     }
 })
+
+
 
 module.exports = mongoose.model('Campground', CampgroundSchema);

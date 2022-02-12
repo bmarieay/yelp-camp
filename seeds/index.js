@@ -6,7 +6,8 @@ const geocoder = mbxGeocoding({ accessToken: mapBoxToken })
 mbxGeocoding({ accessToken: mapBoxToken })
 const axios = require("axios")
 const key = process.env.API_KEY;
-const mainAuth = process.env.OWNER_ID;
+// const mainAuth = process.env.OWNER_ID;
+const mainAuth = '62040b04c7e98a10d8c2d8ac';
 
 //get the model 
 const Campground = require('../models/campground');
@@ -14,7 +15,8 @@ const User = require('../models/user');
 const campground = require("../models/campground");
 
 //initial connection error
-const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp';
+// const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp';
+const dbUrl = 'mongodb://localhost:27017/yelp-camp';
 mongoose.connect(dbUrl)
     .then(() => {
         console.log('CONNECTION MONGO OPEN!')

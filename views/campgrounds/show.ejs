@@ -45,11 +45,16 @@
         </form>
         </div>
       <% } %> 
-
-      <div class="card-footer text-muted">
-        2 days ago
-        <a href="/campgrounds">All Campgrounds</a>
+      
+      <div class="card-footer">
+        <% if(String(campground.createdAt)!==String(campground.updatedAt)) {%> 
+          Updated at: <span class="text-muted"><%= campground.updatedAt %></span>
+        <% } else {%> 
+          Created at: <span class="text-muted"><%= campground.createdAt %></span>
+        <% } %> 
+          <a href="/campgrounds" class="d-block pt-2">All Campgrounds</a>
       </div>
+
 
     </div>
     
