@@ -8,18 +8,43 @@ mbxGeocoding({ accessToken: mapBoxToken })
 
 module.exports.index = async (req, res) => {
     // const campgrounds = await Campground.find({});
-    let {page, size} = req.query;
+    const result = {};
+    let {page, limit} = req.query;
+    page = parseInt(page);
+    limit = parseInt(limit);
     if(!page){
         page=1;//very first page
     }
-    if(!size){
-        size=10;
+    if(!limit){
+        limit=5;
     }
-    const limit = parseInt(size);
-    const skip = (page - 1) * 10; //resource to be loaded
-    console.log(page, size);
+    const startIndex = (page - 1) * limit;
+    console.log(startIndex)
+    const endIndex = page * limit;
+    console.log(endIndex)
+    // const skip = (page - 1) * limit; //resource to be loaded
+    console.log(page, limit);
+    const allCampgrounds = await Campground.find({});
+    
+    const campgrounds = await Campground.find().limit(limit).skip(startIndex);
+    if(startIndex > 0){
+        console.log("entered first")
+        result.previous = {
+            page: page - 1,
+            limit: limit
+        }
+    }
+    // console.log(allCampgrounds.map( camp => camp).length, "LENGTH")
+    if(endIndex < allCampgrounds.map( camp => camp).length){
+        console.log("entered sec")
+        result.next = {
+            page: page + 1,
+            limit: limit
+        }
+    }
+    
+    result.results = campgrounds;
     // const campgrounds = await Campground.find({}, {}, {limit: limit, skip: skip})
-    const campgrounds = await Campground.find().limit(limit).skip(skip);
     // res.render('campgrounds/index', {campgrounds});
     // res.send({//use this idea for dynamic page loading in index file
     //     page,
@@ -30,10 +55,9 @@ module.exports.index = async (req, res) => {
     if(!campgrounds.length){//if there is no more to load
         console.log(campgrounds)
     }
+    // res.send(result)
     //convert to int for the pagination index file
-    page = parseInt(page);
-    size = parseInt(size);
-    res.render('campgrounds/index', {campgrounds, page, size});
+    res.render('campgrounds/index', {result});
 }
 
 module.exports.renderNewForm = (req, res) => {

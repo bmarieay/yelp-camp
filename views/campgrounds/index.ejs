@@ -2,15 +2,26 @@
 <div id="cluster-map" class="border border-dark"></div>
 <h1 class="title">All Campgrounds</h1>
 
+<!-- <nav aria-label="Campgrounds navigation pages">
+    <ul class="pagination justify-content-center">
+      <li class="page-item"><a class="page-link" href="/campgrounds?page=<%= result.previous.page %> ">Previous</a></li>
+      <li class="page-item"><a class="page-link" href="/campgrounds?page=<%= result.previous.page+1 %>&size=5"><%= result.previous.page+1 %></a></li>
+      <li class="page-item"><a class="page-link" href="/campgrounds?page=<%= result.next.page %>&size=5"><%= result.next.page %> </a></li>
+      <li class="page-item"><a class="page-link" href="/campgrounds?page=<%= result.next.page+1 %>&size=5"><%= result.next.page+1 %> </a></li>
+      <li class="page-item"><a class="page-link" href="/campgrounds?page=<%= result.next.page+2 %>&size=5"><%= result.next.page+2 %> </a></li>
+      <li class="page-item"><a class="page-link" href="/campgrounds?page=<%= result.next.page+3 %>&size=5"><%= result.next.page+3 %> </a></li>
+      <li class="page-item"><a class="page-link" href="/campgrounds?page=<%= result.next.page %> ">Next</a></li>
+    </ul>
+</nav> -->
 <nav aria-label="Campgrounds navigation pages">
     <ul class="pagination justify-content-center">
-      <li class="page-item"><a class="page-link" href="/campgrounds?page=<%= page-1 %> ">Previous</a></li>
-      <li class="page-item"><a class="page-link" href="/campgrounds?page=<%= page %>&size=10"><%= page %></a></li>
-      <li class="page-item"><a class="page-link" href="/campgrounds?page=<%= page+1 %>&size=10"><%= page+1 %> </a></li>
-      <li class="page-item"><a class="page-link" href="/campgrounds?page=<%= page+2 %>&size=10"><%= page+2 %> </a></li>
-      <li class="page-item"><a class="page-link" href="/campgrounds?page=<%= page+3 %>&size=10"><%= page+3 %> </a></li>
-      <li class="page-item"><a class="page-link" href="/campgrounds?page=<%= page+4 %>&size=10"><%= page+4 %> </a></li>
-      <li class="page-item"><a class="page-link" href="/campgrounds?page=<%= page+1 %> ">Next</a></li>
+      <li class="page-item"><a class="page-link page-prev">Previous</a></li>
+      <li class="page-item"><a class="page-link page-num">1</a></li>
+      <li class="page-item"><a class="page-link page-num" >2</a></li>
+      <li class="page-item"><a class="page-link page-num" >3</a></li>
+      <li class="page-item"><a class="page-link page-num" >4</a></li>
+      <li class="page-item"><a class="page-link page-num">5</a></li>
+      <li class="page-item"><a class="page-link page-next">Next</a></li>
     </ul>
 </nav>
 
@@ -22,7 +33,7 @@
 
 
 <!-- show each campground -->
-    <% for(let campground of campgrounds) {%>
+    <% for(let campground of result.results) {%>
         <div class="card mb-3 border border-secondary rounded rounded-1 theme-target">
             <div class="row">
                 <div class="col-md-4">
@@ -54,7 +65,8 @@
     <script>
         const mapToken = '<%- process.env.MAPBOX_TOKEN %>';
         //map will be looking for features to search from
-        const campgrounds = {features: <%- JSON.stringify(campgrounds) %>};
+        const campgrounds = {features: <%- JSON.stringify(result.results) %>};
     </script>
       
     <script src="/javascripts/clusterMap.js"></script>
+    <script src="/javascripts/pagination.js"></script>
