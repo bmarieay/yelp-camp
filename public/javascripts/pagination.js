@@ -3,8 +3,6 @@ const prevBtn = document.querySelector('.page-prev');
 const nextBtn = document.querySelector('.page-next');
 const previousContainer = document.querySelector('.prev-btn');
 const nextContainer = document.querySelector('.next-btn');
-// const firstIndex = document.querySelector('.page-num-first');
-// const lastIndex = document.querySelector('.page-num-last');
 
 
 // alert(localStorage.getItem("currentPage"))
@@ -39,7 +37,7 @@ const pageNumber = (total, max, current) => {
     return Array.from({length: max}, (_, i) => (i + 1) + from)
 }
 
-initialize();
+initialize();//initialize everything for new load
 
 function initialize (){
     console.log(parseInt(localStorage.getItem("currentPage")))
@@ -47,22 +45,18 @@ function initialize (){
     generateButtons(pageButton, arrayofBtns);
 }
 
-
+//calls the new list of pages
 function renderCorrectPages(currentPage){
     //set the new page
     localStorage.setItem("currentPage", currentPage);
-    // for(let btn of pageButton){
-    //     if(btn.innerText === localStorage.getItem("currentPage")){
-    //         btn.classList.add('active-btn');
-    //     }
-    // }
 
     console.log("CURRENT:", currentPage);
-    // initialize();
-    let btnArray = pageNumber(10, 5, parseInt(localStorage.getItem("currentPage")))
-    generateButtons(pageButton, btnArray);
+    initialize();
+    // let btnArray = pageNumber(10, 5, parseInt(localStorage.getItem("currentPage")))
+    // generateButtons(pageButton, btnArray);
 }
 
+//updates the buttons
 function generateButtons(buttons, numbers){
     let i = 0;
     for(let button of buttons){
@@ -71,32 +65,37 @@ function generateButtons(buttons, numbers){
     }
 }
 
-
+//acts like a pagination driver
+function paginationHandler(url, page){
+    alert(this);
+    this.setAttribute('href',url);
+    renderCorrectPages(page)
+}
 
 for(let button of pageButton){
-    button.addEventListener('click', () => {
-        button.setAttribute('href', `/campgrounds?page=${button.innerText}`);
-        renderCorrectPages(parseInt(button.innerText))
+    button.addEventListener('click', function() {
+        paginationHandler.call(this, `/campgrounds?page=${button.innerText}`, parseInt(button.innerText));
     });
 }
 
-
-prevBtn.addEventListener('click', () => {
+prevBtn.addEventListener('click', function() {
     if(localStorage.getItem("currentPage") > 0){
-        // previousContainer.firstChild.classList.remove('text-muted');
-        // console.log("previous", localStorage.getItem("currentPage"))
-        prevBtn.setAttribute('href', `/campgrounds?page=${parseInt(localStorage.getItem("currentPage")) - 1}`);
-        //update the currennt page
-        renderCorrectPages(parseInt(localStorage.getItem("currentPage")) -1);
-    }
+        paginationHandler.call(
+            this,
+            `/campgrounds?page=${parseInt(localStorage.getItem("currentPage")) - 1}`,
+            parseInt(localStorage.getItem("currentPage")) -1
+            );
+        }
+        
+    })
     
-})
-
-nextBtn.addEventListener('click', () => {
-    if(localStorage.getItem("currentPage") < 10){
-        // console.log("next", localStorage.getItem("currentPage"))
-        nextBtn.setAttribute('href', `/campgrounds?page=${parseInt(localStorage.getItem("currentPage")) + 1}`);
-        renderCorrectPages(parseInt(localStorage.getItem("currentPage")) + 1);
+    nextBtn.addEventListener('click', function() {
+        if(localStorage.getItem("currentPage") < 10){
+            paginationHandler.call(
+                this,
+                `/campgrounds?page=${parseInt(localStorage.getItem("currentPage")) + 1}`,
+                parseInt(localStorage.getItem("currentPage")) + 1
+                );
     }
 })
 
