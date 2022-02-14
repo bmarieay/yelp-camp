@@ -7,12 +7,10 @@ const geocoder = mbxGeocoding({ accessToken: mapBoxToken })
 mbxGeocoding({ accessToken: mapBoxToken })
 
 module.exports.index = async (req, res) => {
-    // const campgrounds = await Campground.find({});
     const result = {};
     let {page, limit} = req.query;
     page = parseInt(page);
     limit = parseInt(limit);
-    console.log("PAGE:", page)
     if(!page){
         page=1;//very first page
     }
@@ -20,45 +18,26 @@ module.exports.index = async (req, res) => {
         limit=5;
     }
     const startIndex = (page - 1) * limit;
-    console.log(startIndex)
     const endIndex = page * limit;
-    console.log(endIndex)
-    // const skip = (page - 1) * limit; //resource to be loaded
-    console.log(page, limit);
     const allCampgrounds = await Campground.find({});
-    
     const campgrounds = await Campground.find().limit(limit).skip(startIndex);
+    //get info for the pagination(prev and next)
     if(startIndex > 0){
-        console.log("entered first")
         result.previous = {
             page: page - 1,
-            limit: limit
+            limit
         }
     }
-    // console.log(allCampgrounds.map( camp => camp).length, "LENGTH")
     if(endIndex < allCampgrounds.map( camp => camp).length){
-        console.log("entered sec")
         result.next = {
             page: page + 1,
-            limit: limit
+            limit
         }
     }
     
     result.results = campgrounds;
+    //for determining max number of pages
     result.allItemsFetched = allCampgrounds.map( camp => camp).length;
-    // const campgrounds = await Campground.find({}, {}, {limit: limit, skip: skip})
-    // res.render('campgrounds/index', {campgrounds});
-    // res.send({//use this idea for dynamic page loading in index file
-    //     page,
-    //     size,
-    //     campgrounds
-    // })
-    //use below to disable next button page
-    if(!campgrounds.length){//if there is no more to load
-        console.log(campgrounds)
-    }
-    // res.send(result)
-    //convert to int for the pagination index file
     res.render('campgrounds/index', {result});
 }
 
@@ -86,13 +65,10 @@ module.exports.createCamground = async (req, res, next) => {
     campground.author = loggedUser;
 
     //push newly created campground to user
-    console.log("before", loggedUser)
     loggedUser.campgrounds.push(campground._id);
     
-    console.log("after", loggedUser)
     await campground.save();
     await loggedUser.save();
-    // console.log(loggedUser);
     req.flash('success', 'Successfully made a new campground!');
     res.redirect(`/campgrounds/${campground._id}`);
 }
@@ -133,7 +109,6 @@ module.exports.renderEditForm = async (req, res) => {
 }
 
 module.exports.editCampground = async (req, res) => {
-    console.log(req.body)
     const {id} = req.params;
     //make this shorter later
     const campground = await Campground.findByIdAndUpdate(id, {...req.body.campground});//spread each properties
@@ -145,7 +120,6 @@ module.exports.editCampground = async (req, res) => {
             await cloudinary.uploader.destroy(filename)
         }
         await campground.updateOne({$pull: {images: {filename: {$in:  req.body.deleteImages}}}})
-        console.log(campground)
     }
     req.flash('success', 'Successfully updated campground!')
     res.redirect(`/campgrounds/${campground._id}`)
@@ -155,21 +129,14 @@ module.exports.deleteCampground = async (req, res) => {
     const {id} = req.params;
     //has mongoose middleware associated with it
     const deletedCampground = await Campground.findByIdAndDelete(id);
-    // const camp = await Campground.findById(id)
-    // const ownerUser = await User.findById(deletedCampground.author._id);
-    // console.log("OWNER IS before deletion: ", ownerUser);
 
     for(let image of deletedCampground.images){//delete associated images in cloud
         await cloudinary.uploader.destroy(image.filename)
     }
 
     //also delete camp id from associated user
-    // await ownerUser.updateOne({$pull: {campgrounds: {_id: camp._id}}});
-    const user = await User.findByIdAndUpdate(deletedCampground.author, { $pull: {campgrounds: id} }, {new: true})
+    await User.findByIdAndUpdate(deletedCampground.author, { $pull: {campgrounds: id} }, {new: true})
 
-
-    console.log("OWNER IS AFTER DELETION: ", user);
-    
     req.flash('success', 'Successfully deleted campground!')
     res.redirect('/campgrounds');
 }

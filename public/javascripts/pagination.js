@@ -3,9 +3,7 @@ const prevBtn = document.querySelector('.page-prev');
 const nextBtn = document.querySelector('.page-next');
 const previousContainer = document.querySelector('.prev-btn');
 const nextContainer = document.querySelector('.next-btn');
-
-
-// alert(localStorage.getItem("currentPage"))
+//TODO: FIX CORRECT PAGINATION BUTTONS WHEN URL IS MODIFIED
 let max = Math.ceil(resultLength / 5.0);
 
 //update total later according to data
@@ -22,15 +20,15 @@ const pageNumber = (total, max, current) => {
     let from = to - max;
     
     if(current === 1){
-        previousContainer.firstChild.classList.add('text-muted');
+        prevBtn.classList.add('text-muted');
     } else {
-        previousContainer.firstChild.classList.remove('text-muted');
+        prevBtn.classList.remove('text-muted');
     }
     
     if(current === total){
-        nextContainer.firstChild.classList.add('text-muted');
+        nextBtn.classList.add('text-muted');
     } else {
-        nextContainer.firstChild.classList.remove('text-muted');
+        nextBtn.classList.remove('text-muted');
     }
     
     
@@ -50,11 +48,8 @@ function initialize (){
 function renderCorrectPages(currentPage){
     //set the new page
     localStorage.setItem("currentPage", currentPage);
-
     console.log("CURRENT:", currentPage);
     initialize();
-    // let btnArray = pageNumber(10, 5, parseInt(localStorage.getItem("currentPage")))
-    // generateButtons(pageButton, btnArray);
 }
 
 //updates the buttons
