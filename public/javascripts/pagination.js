@@ -6,7 +6,7 @@ const nextContainer = document.querySelector('.next-btn');
 
 
 // alert(localStorage.getItem("currentPage"))
-
+let max = Math.ceil(resultLength / 5.0);
 
 //update total later according to data
 const pageNumber = (total, max, current) => {
@@ -41,7 +41,8 @@ initialize();//initialize everything for new load
 
 function initialize (){
     console.log(parseInt(localStorage.getItem("currentPage")))
-    let arrayofBtns = pageNumber(10, 5, parseInt(localStorage.getItem("currentPage")));
+    let arrayofBtns = pageNumber(max, 5, parseInt(localStorage.getItem("currentPage")));
+
     generateButtons(pageButton, arrayofBtns);
 }
 

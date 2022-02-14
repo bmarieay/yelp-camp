@@ -12,6 +12,7 @@ module.exports.index = async (req, res) => {
     let {page, limit} = req.query;
     page = parseInt(page);
     limit = parseInt(limit);
+    console.log("PAGE:", page)
     if(!page){
         page=1;//very first page
     }
@@ -44,6 +45,7 @@ module.exports.index = async (req, res) => {
     }
     
     result.results = campgrounds;
+    result.allItemsFetched = allCampgrounds.map( camp => camp).length;
     // const campgrounds = await Campground.find({}, {}, {limit: limit, skip: skip})
     // res.render('campgrounds/index', {campgrounds});
     // res.send({//use this idea for dynamic page loading in index file
@@ -63,8 +65,6 @@ module.exports.index = async (req, res) => {
 module.exports.renderNewForm = (req, res) => {
     res.render('campgrounds/new')
 }
-//cut description if long
-//fix images
 
 module.exports.createCamground = async (req, res, next) => {
     const geoData = await geocoder.forwardGeocode({
