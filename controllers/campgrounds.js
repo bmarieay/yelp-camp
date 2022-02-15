@@ -3,8 +3,8 @@ const User = require("../models/user")
 const { cloudinary } = require("../cloudinary")
 const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
 const mapBoxToken = process.env.MAPBOX_TOKEN;
-const geocoder = mbxGeocoding({ accessToken: mapBoxToken })
-mbxGeocoding({ accessToken: mapBoxToken })
+const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
+mbxGeocoding({ accessToken: mapBoxToken });
 
 module.exports.index = async (req, res) => {
     const result = {};
@@ -28,6 +28,7 @@ module.exports.index = async (req, res) => {
             limit
         }
     }
+
     if(endIndex < allCampgrounds.map( camp => camp).length){
         result.next = {
             page: page + 1,
