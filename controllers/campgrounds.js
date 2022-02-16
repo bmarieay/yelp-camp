@@ -75,12 +75,49 @@ module.exports.createCamground = async (req, res, next) => {
 }
 
 module.exports.showUserCampgrounds = async (req, res) => {
-    //get the user and populate it
-    const user = await User.findById(req.user)
+    const result = {};
+    let {page, limit} = req.query;
+    page = parseInt(page);
+    limit = parseInt(limit);
+    if(!page){
+        page=1;//very first page
+    }
+    if(!limit){
+        limit=10;
+    }
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    let user = await User.findById(req.user)
         .populate('campgrounds');
-    const campgrounds = user.campgrounds;
-    // res.send(campgrounds);
-    res.render('campgrounds/index', {campgrounds})
+    //get info for the pagination(prev and next)
+    if(startIndex > 0){
+        result.previous = {
+            page: page - 1,
+            limit
+        }
+    }
+
+    if(endIndex < user.campgrounds.map( camp => camp).length){
+        result.next = {
+            page: page + 1,
+            limit
+        }
+    }
+
+    res.cookie('currentPage', page);
+    //for determining max number of pages
+    result.allItemsFetched = user.campgrounds.map( camp => camp).length;
+    //get the user and populate it
+    user = await User.findById(req.user)
+    .populate({
+        path: 'campgrounds',
+        options: {
+            limit,
+            skip: startIndex
+        }
+    });
+    result.results = user.campgrounds;
+    res.render('campgrounds/index', {result})
 }
 
 module.exports.showCampground = async (req, res) => {
