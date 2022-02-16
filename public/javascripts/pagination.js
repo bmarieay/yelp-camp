@@ -18,15 +18,20 @@ const pageNumber = (total, max, current) => {
     }
     
     let from = to - max;
-    
-    if(current === 1){
+
+
+    if(current <= 1){
         prevBtn.classList.add('text-muted');
+        if(current <= 0){
+            prevBtn.removeAttribute('href')
+        }
     } else {
         prevBtn.classList.remove('text-muted');
     }
     
     if(current === total){
         nextBtn.classList.add('text-muted');
+        nextBtn.removeAttribute('href');
     } else {
         nextBtn.classList.remove('text-muted');
     }
@@ -38,7 +43,6 @@ const pageNumber = (total, max, current) => {
 initialize();//initialize everything for new load
 
 function initialize (){
-    // console.log(parseInt(localStorage.getItem("currentPage")))
     let arrayofBtns = pageNumber(max, 5, readCookie());
 
     generateButtons(pageButton, arrayofBtns);
@@ -48,7 +52,6 @@ function initialize (){
 function readCookie() {
     var allcookies = document.cookie;
     let key, value;
-    document.write ("All Cookies : " + allcookies );
     
     // Get all the cookies pairs in an array
     cookiearray = allcookies.split(';');
@@ -83,19 +86,20 @@ function generateButtons(buttons, numbers){
 
 //acts like a pagination driver
 function paginationHandler(url, page){
-    alert(this);
     this.setAttribute('href',url);
     renderCorrectPages(page)
 }
 
+//will listen when user clicks any page buttons
 for(let button of pageButton){
     button.addEventListener('click', function() {
         paginationHandler.call(this, `/campgrounds?page=${button.innerText}`, parseInt(button.innerText));
     });
 }
 
+//previous button
 prevBtn.addEventListener('click', function() {
-    if(readCookie() > 0){
+    if(readCookie() >= 0){
         paginationHandler.call(
             this,
             `/campgrounds?page=${readCookie() - 1}`,
@@ -103,20 +107,11 @@ prevBtn.addEventListener('click', function() {
             );
         }
         
-    })
-// prevBtn.addEventListener('click', function() {
-//     if(localStorage.getItem("currentPage") > 0){
-//         paginationHandler.call(
-//             this,
-//             `/campgrounds?page=${parseInt(localStorage.getItem("currentPage")) - 1}`,
-//             parseInt(localStorage.getItem("currentPage")) -1
-//             );
-//         }
-        
-//     })
+})
+
     
 nextBtn.addEventListener('click', function() {
-        if(readCookie() < 10){
+        if(readCookie() < max){
             paginationHandler.call(
                 this,
                 `/campgrounds?page=${readCookie() + 1}`,

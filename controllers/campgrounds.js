@@ -15,7 +15,7 @@ module.exports.index = async (req, res) => {
         page=1;//very first page
     }
     if(!limit){
-        limit=5;
+        limit=10;
     }
     const startIndex = (page - 1) * limit;
     const endIndex = page * limit;
@@ -35,7 +35,7 @@ module.exports.index = async (req, res) => {
             limit
         }
     }
-    
+    res.cookie('currentPage', page);
     result.results = campgrounds;
     //for determining max number of pages
     result.allItemsFetched = allCampgrounds.map( camp => camp).length;
@@ -96,7 +96,8 @@ module.exports.showCampground = async (req, res) => {
         req.flash('error', 'Cannot find that campground!')
         return res.redirect('/campgrounds')
     }
-    res.render('campgrounds/show', {campground});
+    const {currentPage} = req.cookies;
+    res.render('campgrounds/show', {campground, currentPage});
 }
 
 module.exports.renderEditForm = async (req, res) => {

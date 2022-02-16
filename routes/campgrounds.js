@@ -6,7 +6,6 @@ const campgrounds = require("../controllers/campgrounds")
 const multer = require("multer")//adds file body to request
 const {storage} = require("../cloudinary")
 const upload = multer({storage})
-
 /*ALL ASYNC ROUTES ARE WRAPPED W/ CATCHASYNC TO
 AVOID REPETITIVE TRY CATCHING*/
 

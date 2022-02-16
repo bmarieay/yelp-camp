@@ -14,8 +14,7 @@ const flash = require('connect-flash')
 const passport = require("passport");
 const LocalStrategy = require("passport-local")
 const User = require('./models/user')
-const Campground = require('./models/campground')
-
+const cookieParser = require('cookie-parser');
 const userRoutes = require('./routes/users')
 const campgroundRoutes = require('./routes/campgrounds')
 const reviewRoutes = require('./routes/reviews')
@@ -38,13 +37,13 @@ mongoose.connect(dbUrl)
         console.log(err)
     })
 
-//after initial connection error
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "connection error:"));
-db.once("open", () => {
-    console.log("Database connected");
-});
-
+    //after initial connection error
+    const db = mongoose.connection;
+    db.on("error", console.error.bind(console, "connection error:"));
+    db.once("open", () => {
+        console.log("Database connected");
+    });
+app.use(cookieParser());
 app.engine('ejs', ejsMate);//for boilerplate embedding
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
