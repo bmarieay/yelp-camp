@@ -3,8 +3,17 @@ const prevBtn = document.querySelector('.page-prev');
 const nextBtn = document.querySelector('.page-next');
 const previousContainer = document.querySelector('.prev-btn');
 const nextContainer = document.querySelector('.next-btn');
+// const removeButtons = document.querySelectorAll('.page-last');
+// const pagination = document.querySelector('.pagination');
 //TODO: FIX CORRECT PAGINATION BUTTONS WHEN URL IS MODIFIED
 let max = Math.ceil(resultLength / 5.0);
+
+for(let button of pageButton){
+    if(parseInt(button.innerText) === readCookie()){
+        button.classList.add('active-btn');
+        break;
+    }
+}
 
 //update total later according to data
 const pageNumber = (total, max, current) => {
@@ -21,12 +30,13 @@ const pageNumber = (total, max, current) => {
 
 
     if(current <= 1){
-        prevBtn.classList.add('text-muted');
-        if(current <= 0){
-            prevBtn.removeAttribute('href')
-        }
+        previousContainer.classList.add('disabled');
+        previousContainer.setAttribute('tabindex', '-1');
     } else {
-        prevBtn.classList.remove('text-muted');
+        previousContainer.removeAttribute('tabindex');
+        previousContainer.classList.remove('disabled');
+        // prevBtn.classList.remove('text-muted');
+
     }
     
     if(current === total){
@@ -40,10 +50,10 @@ const pageNumber = (total, max, current) => {
     return Array.from({length: max}, (_, i) => (i + 1) + from)
 }
 
-initialize();//initialize everything for new load
+initialize(5);//initialize everything for new load
 
-function initialize (){
-    let arrayofBtns = pageNumber(max, 5, readCookie());
+function initialize (max){
+    let arrayofBtns = pageNumber(max, max, readCookie());
 
     generateButtons(pageButton, arrayofBtns);
 }
@@ -72,7 +82,7 @@ function renderCorrectPages(currentPage){
     // localStorage.setItem("currentPage", currentPage);
     document.cookie = `currentPage=${currentPage}`;
     console.log("CURRENT:", currentPage);
-    initialize();
+    initialize(5);
 }
 
 //updates the buttons

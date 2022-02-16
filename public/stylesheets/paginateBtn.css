@@ -1,3 +1,39 @@
+
+.page-link{
+    background-color: transparent;
+    color:#000;
+}
+
+.page-num{
+    border: none;
+
+}
+
+.prev-btn, .next-btn{
+    border: 2px solid black;
+}
+
+.page-link:hover{
+    color: #fff;
+    background-color: rgb(54, 87, 54);
+}
+.page-item{
+    margin-left: .2rem;
+    margin-right: .2rem;
+}
+
 .active-btn {
-    color: red;
+    background-color: rgb(0, 53, 0);
+    color: #fff;
+}
+
+@media(min-width: 420px){
+    .page-item{
+        margin-left: .2rem;
+        margin-right: .2rem;
+    }
+    .pagination-sm .page-link{
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
 }

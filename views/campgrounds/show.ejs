@@ -52,7 +52,7 @@
         <% } else {%> 
           Created at: <span class="text-muted"><%= campground.createdAt %></span>
         <% } %> 
-          <a href=/campgrounds?page=<%= currentPage %> class="d-block pt-2">All Campgrounds</a>
+          <a href=/campgrounds?page=<%= currentPage %> class="d-block pt-2 accent">All Campgrounds</a>
       </div>
 
 
@@ -66,7 +66,7 @@
       <% if(!currentUser) {%>
         <p class="lead mt-5 text-center mb-4">Please sign in or register to have access to reviews</p>
       <% } else {%>  
-      <h2>Leave a Review</h2>
+      <h2 class="mt-md-4">Leave a Review</h2>
         <!-- Input Review Section -->
         <form action="/campgrounds/<%= campground._id %>/reviews" class="validated-form mb-5" method="POST" novalidate>
           <fieldset class="starability-slot mb-3">

@@ -2,22 +2,31 @@ const mode = document.querySelector('#theme');
 const togglerMode = document.querySelector('.form-check-input');
 const themeLabel = document.querySelector('#theme-label')
 const element = document.querySelectorAll('.theme-target');
+const pageLinks = document.querySelectorAll('.page-link');
+const accentTexts = document.querySelectorAll('.accent');
 const inner = document.querySelectorAll('.nav-link');
 const brand = document.querySelector('.navbar-brand');
-const targets = [...element, ...inner];
-
+const targets = [...element, ...inner, ...pageLinks];
+//TODO: ONLY TARGET ACCENT TITLES
 function setTheme(mode){
     if(mode === 'dark'){
         togglerMode.checked = true;
         for(let target of targets){
             target.classList.add(`${mode}-theme`);
         }
-        brand.classList.add(`${mode}-theme`)
+        brand.classList.add(`${mode}-theme`);
+        for(let accent of accentTexts){
+            accent.classList.add('lightgreen');
+        }
         themeLabel.innerText = "Light Mode"
     }
     if(mode === 'light'){
         for(let target of targets){
             target.classList.remove(`${mode}-theme`);
+        }
+        brand.classList.add(`${mode}-theme`);
+        for(let accent of accentTexts){
+            accent.classList.remove('lightgreen');
         }
         brand.classList.remove(`${mode}-theme`)
         themeLabel.innerText = "Dark Mode"

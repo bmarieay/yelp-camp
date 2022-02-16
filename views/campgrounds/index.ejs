@@ -3,21 +3,21 @@
 <h1 class="title">All Campgrounds</h1>
 
 
-<nav aria-label="Campgrounds navigation pages">
-    <ul class="pagination justify-content-center">
-      <li class="page-item prev-btn"><a class="page-link page-prev" href="">Previous</a></li>
-      <li class="page-item"><a class="page-link page-num" href="">1</a></li>
-      <li class="page-item"><a class="page-link page-num" href="">2</a></li>
-      <li class="page-item"><a class="page-link page-num" href="">3</a></li>
-      <li class="page-item"><a class="page-link page-num" href="">4</a></li>
-      <li class="page-item"><a class="page-link page-num" href="">5</a></li>
-      <li class="page-item next-btn"><a class="page-link page-next" href="">Next</a></li>
+<nav aria-label="Campgrounds navigation pages" class="fw-bold">
+    <ul class="pagination pagination-sm d-flex justify-content-center">
+      <li class="page-item prev-btn"><a class="page-link page-prev" href="">Prev</a></li>
+      <li class="page-item align-self-center"><a class="page-link page-num" href="">1</a></li>
+      <li class="page-item align-self-center"><a class="page-link page-num" href="">2</a></li>
+      <li class="page-item align-self-center"><a class="page-link page-num" href="">3</a></li>
+      <li class="page-item page-last align-self-center"><a class="page-link page-num" href="">4</a></li>
+      <li class="page-item page-last align-self-center"><a class="page-link page-num" href="">5</a></li>
+      <li class="page-item next-btn align-self-center"><a class="page-link page-next" href="">Next</a></li>
     </ul>
 </nav>
 
 
 <div class="gutter">
-    <a href="/campgrounds/new">Add Campground</a>
+    <a href="/campgrounds/new" class="accent">Add Campground</a>
 </div>
 
 <!-- show each campground -->
@@ -34,7 +34,7 @@
 
                 <div class="col-md-8">
                     <div class="card-body">
-                        <h5 class="card-title"><a href="/campgrounds/<%= campground._id %>"><%= campground.title %></a></h5>
+                        <h5 class="card-title"><a href="/campgrounds/<%= campground._id %>" class="accent"><%= campground.title %></a></h5>
                             <!-- shorten description if it is long -->
                             <% if(campground.description.length >= 200){ %>
                                 <p class="card-text"><%= campground.description.substring(0, 220) %>...</p>
