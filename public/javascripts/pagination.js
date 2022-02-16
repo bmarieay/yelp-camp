@@ -3,9 +3,8 @@ const prevBtn = document.querySelector('.page-prev');
 const nextBtn = document.querySelector('.page-next');
 const previousContainer = document.querySelector('.prev-btn');
 const nextContainer = document.querySelector('.next-btn');
-alert(resultLength);
 let max = Math.ceil(resultLength / 5.0);
-alert(max)
+
 
 
 //update total later according to data
