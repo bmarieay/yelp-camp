@@ -1,26 +1,27 @@
 :root{
-    --navbar-dark: #000;
-    --text-dark: #FFF;
-    --navbar-light: #999999;
-    --text-light: #000;
+    --univ-dark: #000;
+    --univ-light: #FFF;
+    --navbar-dark: var(--univ-dark);
+    --text-dark: var(--univ-light);
+    --navbar-light: #999;
+    --text-light: var(--univ-dark);
     --card-dark: #191a1a;
-    --pagination-dark: #003500;
+    --pagination-light: #284628;
 }
 
 *{
     transition: background-color 500ms ease;
 }
+
 .navbar,
 .footer{
     background-color: var(--navbar-light);
 }
 
-.accent, .accent:hover{
-    color: var(--pagination-dark);
-}
-
-.lightgreen, .lightgreen:hover{
-    color: lightgreen;
+.accent{
+    color: var(--pagination-light);
+    font-weight: 670;
+    letter-spacing: .015em;
 }
 
 .nav-link, .navbar-brand{
@@ -31,6 +32,7 @@
     background-color: var(--navbar-dark);
     color: var(--text-dark);
 }
+
 .nav-link.dark-theme, .navbar-brand.dark-theme, 
 .card-title.dark-theme,
 .card-text.dark-theme{
@@ -48,6 +50,7 @@
 .navbar-toggler-icon {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(0, 0, 0, 0.5)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
 }
+
 .navbar-toggler-icon.dark-theme {
     background-color: unset;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(250, 250, 250, 0.5)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
@@ -55,7 +58,7 @@
 
  /* dont change popup background */
 .mapboxgl-popup-content{
-    color: black;
+    color: var(--univ-dark);
 }
 
 .form-switch .form-check-input,
@@ -65,7 +68,7 @@
 .form-check-input:focus{
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
     background-color: black;
-    border-color: #fff;
+    border-color: var(--univ-light);
     box-shadow: rgba(41, 41, 41, 0.25) 0px 0px 0px 4px;
     height: 25px;
     width: 40px;
@@ -93,7 +96,7 @@
 }
 
 .active-btn.dark-theme{
-    background-color: var(--pagination-dark);
+    background-color: var(--pagination-light);
 }
 
 .page-link.dark-theme{
@@ -101,8 +104,7 @@
 }
 
 .next-btn.dark-theme{
-    /* border: 2px solid white !important; */
-    border-color: white;
+    border-color: var(--univ-light);
 }
 
 #map, #cluster-map{

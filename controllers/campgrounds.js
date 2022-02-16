@@ -5,7 +5,7 @@ const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
 const mapBoxToken = process.env.MAPBOX_TOKEN;
 const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
 mbxGeocoding({ accessToken: mapBoxToken });
-
+//TODO: MAKE A MIDDLEWARE FOR RENDERING INDEX
 module.exports.index = async (req, res) => {
     const result = {};
     let {page, limit} = req.query;

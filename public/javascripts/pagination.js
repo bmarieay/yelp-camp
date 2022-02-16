@@ -3,9 +3,7 @@ const prevBtn = document.querySelector('.page-prev');
 const nextBtn = document.querySelector('.page-next');
 const previousContainer = document.querySelector('.prev-btn');
 const nextContainer = document.querySelector('.next-btn');
-// const removeButtons = document.querySelectorAll('.page-last');
-// const pagination = document.querySelector('.pagination');
-//TODO: FIX CORRECT PAGINATION BUTTONS WHEN URL IS MODIFIED
+
 let max = Math.ceil(resultLength / 5.0);
 
 for(let button of pageButton){

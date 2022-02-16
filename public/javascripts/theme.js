@@ -15,18 +15,11 @@ function setTheme(mode){
             target.classList.add(`${mode}-theme`);
         }
         brand.classList.add(`${mode}-theme`);
-        for(let accent of accentTexts){
-            accent.classList.add('lightgreen');
-        }
         themeLabel.innerText = "Light Mode"
     }
     if(mode === 'light'){
         for(let target of targets){
             target.classList.remove(`${mode}-theme`);
-        }
-        brand.classList.add(`${mode}-theme`);
-        for(let accent of accentTexts){
-            accent.classList.remove('lightgreen');
         }
         brand.classList.remove(`${mode}-theme`)
         themeLabel.innerText = "Dark Mode"
