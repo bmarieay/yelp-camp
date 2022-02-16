@@ -12,7 +12,6 @@ const mainAuth = '62040b04c7e98a10d8c2d8ac';
 //get the model 
 const Campground = require('../models/campground');
 const User = require('../models/user');
-const campground = require("../models/campground");
 
 //initial connection error
 // const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp';
@@ -42,7 +41,7 @@ const processDatas = async () => {
                 api_key : key
             } 
         };
-        const res = await axios.get(`https://developer.nps.gov/api/v1/campgrounds`, config);
+        const res = await axios.get(`https://developer.nps.gov/api/v1/campgrounds?limit=627`, config);
         return res;
     } catch (e) {
         console.log("Connection timeout")

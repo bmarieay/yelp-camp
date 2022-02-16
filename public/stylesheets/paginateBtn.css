@@ -1,0 +1,35 @@
+
+.page-link{
+    background-color: transparent;
+    color: var(--univ-dark);
+}
+
+.page-num{
+    border: none;
+}
+
+.prev-btn, .next-btn{
+    border: 2px solid var(--univ-dark);
+}
+
+.page-link:hover{
+    color: var(--univ-light);
+    background-color: rgb(54, 87, 54);
+}
+
+.page-item{
+    margin-left: .2rem;
+    margin-right: .2rem;
+}
+
+.active-btn {
+    background-color: rgb(0, 53, 0);
+    color: var(--univ-light);
+}
+
+@media(min-width: 420px){
+    .pagination-sm .page-link{
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}

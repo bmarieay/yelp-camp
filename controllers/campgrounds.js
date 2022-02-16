@@ -3,19 +3,48 @@ const User = require("../models/user")
 const { cloudinary } = require("../cloudinary")
 const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
 const mapBoxToken = process.env.MAPBOX_TOKEN;
-const geocoder = mbxGeocoding({ accessToken: mapBoxToken })
-mbxGeocoding({ accessToken: mapBoxToken })
-
+const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
+mbxGeocoding({ accessToken: mapBoxToken });
+//TODO: MAKE A MIDDLEWARE FOR RENDERING INDEX
 module.exports.index = async (req, res) => {
-    const campgrounds = await Campground.find({});
-    res.render('campgrounds/index', {campgrounds});
+    const result = {};
+    let {page, limit} = req.query;
+    page = parseInt(page);
+    limit = parseInt(limit);
+    if(!page){
+        page=1;//very first page
+    }
+    if(!limit){
+        limit=10;
+    }
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const allCampgrounds = await Campground.find({});
+    const campgrounds = await Campground.find().limit(limit).skip(startIndex);
+    //get info for the pagination(prev and next)
+    if(startIndex > 0){
+        result.previous = {
+            page: page - 1,
+            limit
+        }
+    }
+
+    if(endIndex < allCampgrounds.map( camp => camp).length){
+        result.next = {
+            page: page + 1,
+            limit
+        }
+    }
+    res.cookie('currentPage', page);
+    result.results = campgrounds;
+    //for determining max number of pages
+    result.allItemsFetched = allCampgrounds.map( camp => camp).length;
+    res.render('campgrounds/index', {result});
 }
 
 module.exports.renderNewForm = (req, res) => {
     res.render('campgrounds/new')
 }
-//cut description if long
-//fix images
 
 module.exports.createCamground = async (req, res, next) => {
     const geoData = await geocoder.forwardGeocode({
@@ -37,24 +66,58 @@ module.exports.createCamground = async (req, res, next) => {
     campground.author = loggedUser;
 
     //push newly created campground to user
-    console.log("before", loggedUser)
     loggedUser.campgrounds.push(campground._id);
     
-    console.log("after", loggedUser)
     await campground.save();
     await loggedUser.save();
-    // console.log(loggedUser);
     req.flash('success', 'Successfully made a new campground!');
     res.redirect(`/campgrounds/${campground._id}`);
 }
 
 module.exports.showUserCampgrounds = async (req, res) => {
-    //get the user and populate it
-    const user = await User.findById(req.user)
+    const result = {};
+    let {page, limit} = req.query;
+    page = parseInt(page);
+    limit = parseInt(limit);
+    if(!page){
+        page=1;//very first page
+    }
+    if(!limit){
+        limit=10;
+    }
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    let user = await User.findById(req.user)
         .populate('campgrounds');
-    const campgrounds = user.campgrounds;
-    // res.send(campgrounds);
-    res.render('campgrounds/index', {campgrounds})
+    //get info for the pagination(prev and next)
+    if(startIndex > 0){
+        result.previous = {
+            page: page - 1,
+            limit
+        }
+    }
+
+    if(endIndex < user.campgrounds.map( camp => camp).length){
+        result.next = {
+            page: page + 1,
+            limit
+        }
+    }
+
+    res.cookie('currentPage', page);
+    //for determining max number of pages
+    result.allItemsFetched = user.campgrounds.map( camp => camp).length;
+    //get the user and populate it
+    user = await User.findById(req.user)
+    .populate({
+        path: 'campgrounds',
+        options: {
+            limit,
+            skip: startIndex
+        }
+    });
+    result.results = user.campgrounds;
+    res.render('campgrounds/index', {result})
 }
 
 module.exports.showCampground = async (req, res) => {
@@ -70,7 +133,8 @@ module.exports.showCampground = async (req, res) => {
         req.flash('error', 'Cannot find that campground!')
         return res.redirect('/campgrounds')
     }
-    res.render('campgrounds/show', {campground});
+    const {currentPage} = req.cookies;
+    res.render('campgrounds/show', {campground, currentPage});
 }
 
 module.exports.renderEditForm = async (req, res) => {
@@ -84,7 +148,6 @@ module.exports.renderEditForm = async (req, res) => {
 }
 
 module.exports.editCampground = async (req, res) => {
-    console.log(req.body)
     const {id} = req.params;
     //make this shorter later
     const campground = await Campground.findByIdAndUpdate(id, {...req.body.campground});//spread each properties
@@ -96,7 +159,6 @@ module.exports.editCampground = async (req, res) => {
             await cloudinary.uploader.destroy(filename)
         }
         await campground.updateOne({$pull: {images: {filename: {$in:  req.body.deleteImages}}}})
-        console.log(campground)
     }
     req.flash('success', 'Successfully updated campground!')
     res.redirect(`/campgrounds/${campground._id}`)
@@ -106,21 +168,14 @@ module.exports.deleteCampground = async (req, res) => {
     const {id} = req.params;
     //has mongoose middleware associated with it
     const deletedCampground = await Campground.findByIdAndDelete(id);
-    // const camp = await Campground.findById(id)
-    // const ownerUser = await User.findById(deletedCampground.author._id);
-    // console.log("OWNER IS before deletion: ", ownerUser);
 
     for(let image of deletedCampground.images){//delete associated images in cloud
         await cloudinary.uploader.destroy(image.filename)
     }
 
     //also delete camp id from associated user
-    // await ownerUser.updateOne({$pull: {campgrounds: {_id: camp._id}}});
-    const user = await User.findByIdAndUpdate(deletedCampground.author, { $pull: {campgrounds: id} }, {new: true})
+    await User.findByIdAndUpdate(deletedCampground.author, { $pull: {campgrounds: id} }, {new: true})
 
-
-    console.log("OWNER IS AFTER DELETION: ", user);
-    
     req.flash('success', 'Successfully deleted campground!')
     res.redirect('/campgrounds');
 }
