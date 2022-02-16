@@ -3,15 +3,10 @@ const prevBtn = document.querySelector('.page-prev');
 const nextBtn = document.querySelector('.page-next');
 const previousContainer = document.querySelector('.prev-btn');
 const nextContainer = document.querySelector('.next-btn');
-
+alert(resultLength);
 let max = Math.ceil(resultLength / 5.0);
+alert(max)
 
-for(let button of pageButton){
-    if(parseInt(button.innerText) === readCookie()){
-        button.classList.add('active-btn');
-        break;
-    }
-}
 
 //update total later according to data
 const pageNumber = (total, max, current) => {
@@ -49,6 +44,13 @@ const pageNumber = (total, max, current) => {
 }
 
 initialize();//initialize everything for new load
+
+for(let button of pageButton){
+    if(parseInt(button.innerText) === readCookie()){
+        button.classList.add('active-btn');
+        break;
+    }
+}
 
 function initialize (){
     let arrayofBtns = pageNumber(max, 5, readCookie());

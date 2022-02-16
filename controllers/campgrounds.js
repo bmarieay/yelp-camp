@@ -15,7 +15,7 @@ module.exports.index = async (req, res) => {
         page=1;//very first page
     }
     if(!limit){
-        limit=10;
+        limit=15;
     }
     const startIndex = (page - 1) * limit;
     const endIndex = page * limit;
