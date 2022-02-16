@@ -48,10 +48,10 @@ const pageNumber = (total, max, current) => {
     return Array.from({length: max}, (_, i) => (i + 1) + from)
 }
 
-initialize(5);//initialize everything for new load
+initialize();//initialize everything for new load
 
-function initialize (max){
-    let arrayofBtns = pageNumber(max, max, readCookie());
+function initialize (){
+    let arrayofBtns = pageNumber(max, 5, readCookie());
 
     generateButtons(pageButton, arrayofBtns);
 }
@@ -79,8 +79,7 @@ function renderCorrectPages(currentPage){
     //set the new page
     // localStorage.setItem("currentPage", currentPage);
     document.cookie = `currentPage=${currentPage}`;
-    console.log("CURRENT:", currentPage);
-    initialize(5);
+    initialize();
 }
 
 //updates the buttons
