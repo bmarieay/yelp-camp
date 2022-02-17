@@ -3,8 +3,7 @@ const prevBtn = document.querySelector('.page-prev');
 const nextBtn = document.querySelector('.page-next');
 const previousContainer = document.querySelector('.prev-btn');
 const nextContainer = document.querySelector('.next-btn');
-let max = Math.ceil(resultLength / 5.0);
-
+let max = Math.ceil(resultLength / 15.0);
 
 
 //update total later according to data
@@ -30,12 +29,14 @@ const pageNumber = (total, max, current) => {
         // prevBtn.classList.remove('text-muted');
 
     }
-    
+    // alert(current);
+    // alert(total);
     if(current === total){
-        nextBtn.classList.add('text-muted');
-        nextBtn.removeAttribute('href');
+        // nextBtn.classList.add('text-muted');
+        // nextBtn.removeAttribute('href');
+        nextContainer.classList.add('disabled')
     } else {
-        nextBtn.classList.remove('text-muted');
+        nextContainer.classList.remove('disabled');
     }
     
     
