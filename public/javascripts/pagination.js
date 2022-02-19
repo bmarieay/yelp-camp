@@ -45,12 +45,7 @@ const pageNumber = (total, max, current) => {
 
 initialize();//initialize everything for new load
 
-for(let button of pageButton){
-    if(parseInt(button.innerText) === readCookie()){
-        button.classList.add('active-btn');
-        break;
-    }
-}
+
 
 function initialize (){
     let arrayofBtns = pageNumber(max, 5, readCookie());
@@ -128,4 +123,11 @@ nextBtn.addEventListener('click', function() {
                 );
     }
 })
+
+for(let button of pageButton){
+    if(parseInt(button.innerText) === readCookie()){
+        button.classList.add('active-btn');
+        break;
+    }
+}
 

@@ -8,18 +8,23 @@ mbxGeocoding({ accessToken: mapBoxToken });
 //TODO: MAKE A MIDDLEWARE FOR RENDERING INDEX
 module.exports.index = async (req, res) => {
     const result = {};
+    const allCampgrounds = await Campground.find({});
+    result.allItemsFetched = allCampgrounds.map( camp => camp).length;
+    const max = Math.ceil(result.allItemsFetched / 15.0);
     let {page, limit} = req.query;
     page = parseInt(page);
     limit = parseInt(limit);
-    if(!page){
+    if(page <= 0){
         page=1;//very first page
+    }
+    if (page > max){
+        page=max;
     }
     if(!limit){
         limit=15;
     }
     const startIndex = (page - 1) * limit;
     const endIndex = page * limit;
-    const allCampgrounds = await Campground.find({});
     const campgrounds = await Campground.find().limit(limit).skip(startIndex);
     //get info for the pagination(prev and next)
     if(startIndex > 0){
@@ -38,7 +43,6 @@ module.exports.index = async (req, res) => {
     res.cookie('currentPage', page);
     result.results = campgrounds;
     //for determining max number of pages
-    result.allItemsFetched = allCampgrounds.map( camp => camp).length;
     res.render('campgrounds/index', {result});
 }
 
