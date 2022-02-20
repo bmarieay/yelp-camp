@@ -14,7 +14,7 @@ module.exports.index = async (req, res) => {
     let {page, limit} = req.query;
     page = parseInt(page);
     limit = parseInt(limit);
-    if(page <= 0 || !page){
+    if(page < 0 || !page){
         page=1;//very first page
     }
     if (page > max){
