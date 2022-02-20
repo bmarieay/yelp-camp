@@ -10,7 +10,7 @@ module.exports.index = async (req, res) => {
     const result = {};
     const allCampgrounds = await Campground.find({});
     result.allItemsFetched = allCampgrounds.map( camp => camp).length;
-    const max = Math.ceil(result.allItemsFetched / 15.0);
+    const max = Math.ceil(result.allItemsFetched / 20.0);
     let {page, limit} = req.query;
     page = parseInt(page);
     limit = parseInt(limit);
@@ -21,7 +21,7 @@ module.exports.index = async (req, res) => {
         page=max;
     }
     if(!limit){
-        limit=15;
+        limit=20;
     }
     const startIndex = (page - 1) * limit;
     const endIndex = page * limit;
