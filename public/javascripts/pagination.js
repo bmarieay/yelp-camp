@@ -3,15 +3,8 @@ const prevBtn = document.querySelector('.page-prev');
 const nextBtn = document.querySelector('.page-next');
 const previousContainer = document.querySelector('.prev-btn');
 const nextContainer = document.querySelector('.next-btn');
+let max = Math.ceil(resultLength / 15.0);
 
-let max = Math.ceil(resultLength / 5.0);
-
-for(let button of pageButton){
-    if(parseInt(button.innerText) === readCookie()){
-        button.classList.add('active-btn');
-        break;
-    }
-}
 
 //update total later according to data
 const pageNumber = (total, max, current) => {
@@ -36,22 +29,26 @@ const pageNumber = (total, max, current) => {
         // prevBtn.classList.remove('text-muted');
 
     }
-    
+    // alert(current);
+    // alert(total);
     if(current === total){
-        nextBtn.classList.add('text-muted');
-        nextBtn.removeAttribute('href');
+        // nextBtn.classList.add('text-muted');
+        // nextBtn.removeAttribute('href');
+        nextContainer.classList.add('disabled')
     } else {
-        nextBtn.classList.remove('text-muted');
+        nextContainer.classList.remove('disabled');
     }
     
     
     return Array.from({length: max}, (_, i) => (i + 1) + from)
 }
 
-initialize(5);//initialize everything for new load
+initialize();//initialize everything for new load
 
-function initialize (max){
-    let arrayofBtns = pageNumber(max, max, readCookie());
+
+
+function initialize (){
+    let arrayofBtns = pageNumber(max, 5, readCookie());
 
     generateButtons(pageButton, arrayofBtns);
 }
@@ -79,8 +76,7 @@ function renderCorrectPages(currentPage){
     //set the new page
     // localStorage.setItem("currentPage", currentPage);
     document.cookie = `currentPage=${currentPage}`;
-    console.log("CURRENT:", currentPage);
-    initialize(5);
+    initialize();
 }
 
 //updates the buttons
@@ -127,4 +123,11 @@ nextBtn.addEventListener('click', function() {
                 );
     }
 })
+
+for(let button of pageButton){
+    if(parseInt(button.innerText) === readCookie()){
+        button.classList.add('active-btn');
+        break;
+    }
+}
 

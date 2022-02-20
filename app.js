@@ -24,9 +24,7 @@ const helmet = require("helmet");
 
 const MongoDBStore = require("connect-mongo");
 
-// const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp';
-const dbUrl ='mongodb://localhost:27017/yelp-camp';
-
+const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp';
 //initial connection error
 mongoose.connect(dbUrl)
     .then(() => {
@@ -76,7 +74,8 @@ const connectSrcUrls = [
     "https://api.mapbox.com",
     "https://*.tiles.mapbox.com",
     "https://events.mapbox.com",
-    "https://www.nps.gov"
+    "https://www.nps.gov",
+    "https://res.cloudinary.com"
 ];
 const fontSrcUrls = [];
 app.use(
@@ -102,8 +101,7 @@ app.use(
     })
 );
 
-// const secret = process.env.SECRET || 'squirrel';
-const secret = 'squirrel';
+const secret = process.env.SECRET || 'squirrel';
 const store = MongoDBStore.create({
     mongoUrl: dbUrl,
     touchAfter: 24 * 60 * 60,
@@ -170,8 +168,7 @@ app.use((err, req, res, next) => {
 })
 
 //=================================
-// const port = process.env.PORT || 3000;
-const port = 3000;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`SERVING ON PORT ${port}`)
 })
