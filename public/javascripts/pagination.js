@@ -3,7 +3,7 @@ const prevBtn = document.querySelector('.page-prev');
 const nextBtn = document.querySelector('.page-next');
 const previousContainer = document.querySelector('.prev-btn');
 const nextContainer = document.querySelector('.next-btn');
-let max = Math.ceil(resultLength / 15.0);
+let max = Math.ceil(resultLength / 20.0);
 console.log("max page:", max, " length result:", resultLength)
 //update total later according to data
 const pageNumber = (total, max, current) => {
