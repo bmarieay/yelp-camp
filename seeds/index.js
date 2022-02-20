@@ -6,17 +6,17 @@ const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
 mbxGeocoding({ accessToken: mapBoxToken });
 const axios = require("axios");
 const key = process.env.API_KEY;
-// const mainAuth = process.env.OWNER_ID;
+const mainAuth = process.env.OWNER_ID;
 const { cloudinary } = require("../cloudinary");
-const mainAuth = '62040b04c7e98a10d8c2d8ac';
+// const mainAuth = '62040b04c7e98a10d8c2d8ac';
 
 //get the model 
 const Campground = require('../models/campground');
 const User = require('../models/user');
 
 //initial connection error
-// const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp';
-const dbUrl = 'mongodb://localhost:27017/yelp-camp';
+const dbUrl = process.env.DB_URL;
+// const dbUrl = 'mongodb://localhost:27017/yelp-camp';
 mongoose.connect(dbUrl)
     .then(() => {
         console.log('CONNECTION MONGO OPEN!')
@@ -68,15 +68,6 @@ const reverseGeo = async (coordinates) => {
 }
 
 async function upload(images, camp){
-    // for(let img of images){
-    //     try {
-    //         //store the result after upload and insert in camp images
-    //         const res = await cloudinary.uploader.upload_large(img, {folder: 'YelpCamp'});
-    //         camp.images.push({url: res.secure_url, filename: res.original_filename});
-    //     } catch (error) {
-    //         console.log(e);
-    //     }
-    // }
     for(let i =0; i< images.length; i++){
         try {
             //store the result after upload and insert in camp images
@@ -86,7 +77,6 @@ async function upload(images, camp){
             if(i === 0){
                 camp.success = 'fail';
             }
-            console.log(e);
         }
     }
 }
