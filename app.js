@@ -25,7 +25,6 @@ const helmet = require("helmet");
 const MongoDBStore = require("connect-mongo");
 
 const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp';
-
 //initial connection error
 mongoose.connect(dbUrl)
     .then(() => {
@@ -75,7 +74,8 @@ const connectSrcUrls = [
     "https://api.mapbox.com",
     "https://*.tiles.mapbox.com",
     "https://events.mapbox.com",
-    "https://www.nps.gov"
+    "https://www.nps.gov",
+    "https://res.cloudinary.com"
 ];
 const fontSrcUrls = [];
 app.use(

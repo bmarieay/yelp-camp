@@ -25,8 +25,9 @@
         <div class="card mb-3 border border-secondary rounded rounded-1 theme-target">
             <div class="row">
                 <div class="col-md-4">
+                    <!-- campground.images[0].url.includes('cloudinary')? campground.images[0].indexSize : -->
                     <% if(campground.images.length) {%>
-                        <img src="<%= campground.images[0].url.includes('cloudinary')? campground.images[0].indexSize :campground.images[0].url %>" alt="" class="img-fluid">
+                        <img src="<%= campground.images[0].indexSize %>" alt="" class="img-fluid">
                     <% } else {%>
                         <img class="img-fluid" src="https://res.cloudinary.com/maranttt/image/upload/v1643679209/YelpCamp/nhzmrsjscjzcll52hpod.jpg" alt="">
                     <% } %>

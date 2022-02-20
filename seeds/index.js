@@ -2,11 +2,12 @@ const mongoose = require("mongoose");
 const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
 require('dotenv').config();
 const mapBoxToken = process.env.MAPBOX_TOKEN;
-const geocoder = mbxGeocoding({ accessToken: mapBoxToken })
-mbxGeocoding({ accessToken: mapBoxToken })
-const axios = require("axios")
+const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
+mbxGeocoding({ accessToken: mapBoxToken });
+const axios = require("axios");
 const key = process.env.API_KEY;
 const mainAuth = process.env.OWNER_ID;
+const { cloudinary } = require("../cloudinary");
 // const mainAuth = '62040b04c7e98a10d8c2d8ac';
 
 //get the model 
@@ -65,16 +66,21 @@ const reverseGeo = async (coordinates) => {
     }
 }
 
+async function upload(images, camp){
+    for(let img of images){
+        //store the result after upload and insert in camp images
+        const res = await cloudinary.uploader.upload(img, {folder: 'YelpCamp'});
+        camp.images.push({url: res.secure_url, filename: res.original_filename});
+    }
+}
+
 const seedDB = async () => {
-    // const author = await User.findById(mainAuth);
     User.findByIdAndUpdate(mainAuth, {$set: {campgrounds: []}});
     try {
         await Campground.deleteMany({});
 
 
         const res = await processDatas();
-        // console.log(author)
-        //add each res
         res.data.data.forEach( async (camp) => {
             if(camp.images[0]){
                 const price = Math.floor(Math.random() * 20) + 10;
@@ -97,14 +103,10 @@ const seedDB = async () => {
                         camp.longitude,
                         camp.latitude
                     ]
-                },
-
-                images: camp.images.map(c => ({ url: c.url}))
+                }
                 }) 
-
+                await upload(camp.images.map(img => img.url), campground);
                 await User.findByIdAndUpdate(mainAuth, {$push:{campgrounds: campground}})
-                // author.campgrounds.push(campground);//link the user to seeded data
-                // console.log(author.campgrounds)
                 await campground.save();
             }
         })
