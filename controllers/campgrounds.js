@@ -14,7 +14,7 @@ module.exports.index = async (req, res) => {
     let {page, limit} = req.query;
     page = parseInt(page);
     limit = parseInt(limit);
-    if(page <= 0){
+    if(page <= 0 || !page){
         page=1;//very first page
     }
     if (page > max){
@@ -33,8 +33,7 @@ module.exports.index = async (req, res) => {
             limit
         }
     }
-
-    if(endIndex < allCampgrounds.map( camp => camp).length){
+    if(endIndex < result.allItemsFetched){
         result.next = {
             page: page + 1,
             limit
