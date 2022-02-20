@@ -14,7 +14,7 @@ module.exports.index = async (req, res) => {
     let {page, limit} = req.query;
     page = parseInt(page);
     limit = parseInt(limit);
-    if(page < 0 || !page){
+    if(!page || page < 0){
         page=1;//very first page
     }
     if (page > max){
@@ -43,6 +43,7 @@ module.exports.index = async (req, res) => {
     result.results = campgrounds;
     //for determining max number of pages
     res.render('campgrounds/index', {result});
+    // res.send(result);
 }
 
 module.exports.renderNewForm = (req, res) => {

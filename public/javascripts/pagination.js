@@ -4,8 +4,6 @@ const nextBtn = document.querySelector('.page-next');
 const previousContainer = document.querySelector('.prev-btn');
 const nextContainer = document.querySelector('.next-btn');
 let max = Math.ceil(resultLength / 15.0);
-
-
 //update total later according to data
 const pageNumber = (total, max, current) => {
     const half = Math.round(max / 2);
@@ -49,7 +47,6 @@ initialize();//initialize everything for new load
 
 function initialize (){
     let arrayofBtns = pageNumber(max, 5, readCookie());
-
     generateButtons(pageButton, arrayofBtns);
 }
 
