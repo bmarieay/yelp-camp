@@ -12,6 +12,7 @@ This is my first full stack CRUD project that allows users to view, post, edit, 
 5. 🔍**Search Feature** ➡️ <i>Coming soon!</i> 
 
 <hr>
+
 ## 🔨Stacks
 YelpCamp is built with **MEN** (*Mongo, Express, and Node*) stack.
 <hr>
