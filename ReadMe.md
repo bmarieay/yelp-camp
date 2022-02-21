@@ -6,7 +6,7 @@ This is my first full stack CRUD project that allows users to view, post, edit, 
 <br>
 
 1.**[NPS API](https://www.nps.gov/subjects/developer/guides.htm)** - I integrated real campgrounds in the United States using an API.<br>
-2. **☀️light and 🌙dark mode** - I used JS DOM Manipulation, localStorage, and Cookies to implement<br>
+2. **☀️light and 🌙dark mode** - I used JS DOM Manipulation, localStorage, and Cookies to implement a theme feature<br>
 3. **🌳My campgrounds** - This feature allows users to show the campgrounds they uploaded to YelpCamp! <br>
 4. **📄pagination feature** - I also used DOM Manipulation, cookies, and Mongoose to implement pagination. This augments the performance by loading only few datas the the user wants rather than loading a whole single resource.<br>
 5. 🔍**Search Feature** ➡️ <i>Coming soon!</i> 
