@@ -15,19 +15,6 @@ const config = {
     } 
 };
 
-async function upload(images, camp){
-    for(let i =0; i< images.length; i++){
-        try {
-            //store the result after upload and insert in camp images
-            const res = await cloudinary.uploader.upload_large(images[i], {folder: 'YelpCamp'});
-            camp.images.push({url: res.secure_url, filename: res.original_filename});
-        } catch (e) {
-            if(i === 0){
-                camp.success = 'fail';
-            }
-        }
-    }
-}
 //TODO: MAKE A MIDDLEWARE FOR RENDERING INDEX
 module.exports.index = async (req, res) => {
     const result = {};
@@ -73,57 +60,80 @@ module.exports.index = async (req, res) => {
     //user searched for something
     const queried = await axios.get(`https://developer.nps.gov/api/v1/campgrounds?limit=3&q=${q}`, config);
     let matchedCampground;
-    const campPromises = queried.data.data.map(async function(camp) {
-        console.log("BEFORE SEARCHING");
+    if(!queried.data.data.length){
+        //do nothing if there is no result in api
+        return res.send("NOTHING FOUND IN API");
+    } else {
+        //If found: save to database or just render if it already exists
+       
+        const campPromises = queried.data.data.map(async function(camp) {
         matchedCampground = await Campground.find({title: camp.name});
-        console.log("AFTER SEARCHING")
-        result.results.push(matchedCampground);
-        console.log("AFTER PUSH");
-        console.log(result.results);
+        if(!matchedCampground.length && camp.images[0]){
+            //make a new campground 
+            const campground = new Campground({
+            location: camp.addresses[0] ? 
+                `${camp.addresses[0].line1} ${camp.addresses[0].city} ${camp.addresses[0].stateCode}`: 
+                await reverseGeo([Number.parseFloat( camp.longitude, 10), Number.parseFloat( camp.latitude, 10)]),
+
+            title: camp.name,
+
+            description: camp.description,
+            //assign a random price if there is no cost
+            price: camp.fees[0] ? camp.fees[0].cost : price,
+            
+
+            images: camp.images.map(c => ({ url: c.url})),
+
+            geometry: {
+                type: 'Point',
+                coordinates: [
+                    camp.longitude,
+                    camp.latitude
+                ]
+            }
+            }) 
+            await campground.save();
+            result.results.push(campground);
+        } else {
+            //MATCH FOUND
+            result.results.push(camp);
+        }
     });
-    await Promise.all(campPromises);
+        await Promise.all(campPromises);
+    }
     // queried.data.data.forEach( async (camp, i) => {
-    //     console.log("BEFORE SEARCHING", i)
-    //     matchedCampground = await Campground.find({title: camp.name});
-    //     console.log("AFTER SEARCHING", i)
-    //     result.results.push(matchedCampground);
-    //     console.log("AFTER PUSH", i);
-    //     console.log(result.results);
-    //     // if(camp.images[0] && camp.name){
-    //     //     const price = Math.floor(Math.random() * 20) + 10;
-    //     //     const campground = new Campground({
-    //     //     //do reverse lookup here!!!!!from the coordinates if no address available
-    //     //     location: camp.addresses[0] ? 
-    //     //         `${camp.addresses[0].line1} ${camp.addresses[0].city} ${camp.addresses[0].stateCode}`: 
-    //     //         await reverseGeo([Number.parseFloat( camp.longitude, 10), Number.parseFloat( camp.latitude, 10)]),
+    //     if(camp.images[0] && camp.name){
+    //         const price = Math.floor(Math.random() * 20) + 10;
+    //         const campground = new Campground({
+    //         //do reverse lookup here!!!!!from the coordinates if no address available
+    //         location: camp.addresses[0] ? 
+    //             `${camp.addresses[0].line1} ${camp.addresses[0].city} ${camp.addresses[0].stateCode}`: 
+    //             await reverseGeo([Number.parseFloat( camp.longitude, 10), Number.parseFloat( camp.latitude, 10)]),
 
-    //     //     title: camp.name,
+    //         title: camp.name,
 
-    //     //     description: camp.description,
-    //     //     //assign a random price if there is no cost
-    //     //     price: camp.fees[0] ? camp.fees[0].cost : price,
+    //         description: camp.description,
+    //         //assign a random price if there is no cost
+    //         price: camp.fees[0] ? camp.fees[0].cost : price,
 
-    //     //     geometry: {
-    //     //         type: 'Point',
-    //     //         coordinates: [
-    //     //             camp.longitude,
-    //     //             camp.latitude
-    //     //         ]
-    //     //     }
-    //     //     }) 
-    //     //     await upload(camp.images.map(img => img.url), campground);
-    //     //     await User.findByIdAndUpdate(mainAuth, {$push:{campgrounds: campground}});
-    //     //     //add cloud uploader for below. use only and save if campground not yet in database otherwise just show it
-    //     //     if(campground.success !== 'fail') {
-    //     //         await campground.save();
-    //     //     }
-    //     //     result.results.push()
-    //     // }
+    //         geometry: {
+    //             type: 'Point',
+    //             coordinates: [
+    //                 camp.longitude,
+    //                 camp.latitude
+    //             ]
+    //         }
+    //         }) 
+    //         await upload(camp.images.map(img => img.url), campground);
+    //         await User.findByIdAndUpdate(mainAuth, {$push:{campgrounds: campground}});
+    //         //add cloud uploader for below. use only and save if campground not yet in database otherwise just show it
+    //         if(campground.success !== 'fail') {
+    //             await campground.save();
+    //         }
+    //         result.results.push()
+    //     }
     // })
-    console.log("OUTSIDE",result.results);
     res.send(result);
-
-    
 }
 
 module.exports.renderNewForm = (req, res) => {
