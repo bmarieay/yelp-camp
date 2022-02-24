@@ -13,7 +13,11 @@
           <li class="nav-item"><a class="nav-link" href="/campgrounds/user">My Campgrounds</a></li>
           <li class="nav-item"><a class="nav-link" href="/campgrounds/new">New Campground</a></li>
         </ul>
-        <ul class="navbar-nav ms-auto">
+        <form class="d-flex ms-auto">
+          <input class="form-control me-2" name="q" type="search" placeholder="Search" aria-label="Search">
+          <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+        <ul class="navbar-nav">
           <% if(!currentUser) {%> 
             <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
             <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>

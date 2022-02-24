@@ -3,47 +3,62 @@ const User = require("../models/user")
 const { cloudinary } = require("../cloudinary")
 const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
 const mapBoxToken = process.env.MAPBOX_TOKEN;
+const axios = require("axios");
+const key = process.env.API_KEY;
 const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
 mbxGeocoding({ accessToken: mapBoxToken });
+const config = {
+    params: 
+    {
+        api_key : key
+    } 
+};
 //TODO: MAKE A MIDDLEWARE FOR RENDERING INDEX
 module.exports.index = async (req, res) => {
     const result = {};
     const allCampgrounds = await Campground.find({});
     result.allItemsFetched = allCampgrounds.map( camp => camp).length;
     const max = Math.ceil(result.allItemsFetched / 20.0);
-    let {page, limit} = req.query;
-    page = parseInt(page);
-    limit = parseInt(limit);
-    if(!page || page < 0){
-        page=1;//very first page
-    }
-    if (page > max){
-        page=max;
-    }
-    if(!limit){
-        limit=20;
-    }
-    const startIndex = (page - 1) * limit;
-    const endIndex = page * limit;
-    const campgrounds = await Campground.find().limit(limit).skip(startIndex);
-    //get info for the pagination(prev and next)
-    if(startIndex > 0){
-        result.previous = {
-            page: page - 1,
-            limit
+    let {page, limit, q} = req.query;
+    if(!q){//if there is no searching passed
+        page = parseInt(page);
+        limit = parseInt(limit);
+        if(!page || page < 0){
+            page=1;//very first page
         }
-    }
-    if(endIndex < result.allItemsFetched){
-        result.next = {
-            page: page + 1,
-            limit
+        if (page > max){
+            page=max;
         }
+        if(!limit){
+            limit=20;
+        }
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
+        const campgrounds = await Campground.find().limit(limit).skip(startIndex);
+        //get info for the pagination(prev and next)
+        if(startIndex > 0){
+            result.previous = {
+                page: page - 1,
+                limit
+            }
+        }
+        if(endIndex < result.allItemsFetched){
+            result.next = {
+                page: page + 1,
+                limit
+            }
+        }
+        res.cookie('currentPage', page);
+        result.results = campgrounds;
+        //for determining max number of pages
+        return res.render('campgrounds/index', {result});
+        // res.send(result);
     }
-    res.cookie('currentPage', page);
-    result.results = campgrounds;
-    //for determining max number of pages
-    res.render('campgrounds/index', {result});
-    // res.send(result);
+    //user searched for something
+    const queried = await axios.get(`https://developer.nps.gov/api/v1/campgrounds?limit=20&q=${q}`, config);
+    res.send(queried.data.data);
+
+    
 }
 
 module.exports.renderNewForm = (req, res) => {
