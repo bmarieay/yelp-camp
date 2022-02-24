@@ -6,6 +6,7 @@ const mapBoxToken = process.env.MAPBOX_TOKEN;
 const axios = require("axios");
 const key = process.env.API_KEY;
 const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
+//TODO: AFTER NEED TO REFACTOR ASYNCS TO MIDDLEWARE
 mbxGeocoding({ accessToken: mapBoxToken });
 const config = {
     params: 
@@ -13,9 +14,24 @@ const config = {
         api_key : key
     } 
 };
+
+async function upload(images, camp){
+    for(let i =0; i< images.length; i++){
+        try {
+            //store the result after upload and insert in camp images
+            const res = await cloudinary.uploader.upload_large(images[i], {folder: 'YelpCamp'});
+            camp.images.push({url: res.secure_url, filename: res.original_filename});
+        } catch (e) {
+            if(i === 0){
+                camp.success = 'fail';
+            }
+        }
+    }
+}
 //TODO: MAKE A MIDDLEWARE FOR RENDERING INDEX
 module.exports.index = async (req, res) => {
     const result = {};
+    result.results = [];
     const allCampgrounds = await Campground.find({});
     result.allItemsFetched = allCampgrounds.map( camp => camp).length;
     const max = Math.ceil(result.allItemsFetched / 20.0);
@@ -55,8 +71,57 @@ module.exports.index = async (req, res) => {
         // res.send(result);
     }
     //user searched for something
-    const queried = await axios.get(`https://developer.nps.gov/api/v1/campgrounds?limit=20&q=${q}`, config);
-    res.send(queried.data.data);
+    const queried = await axios.get(`https://developer.nps.gov/api/v1/campgrounds?limit=3&q=${q}`, config);
+    let matchedCampground;
+    const campPromises = queried.data.data.map(async function(camp) {
+        console.log("BEFORE SEARCHING");
+        matchedCampground = await Campground.find({title: camp.name});
+        console.log("AFTER SEARCHING")
+        result.results.push(matchedCampground);
+        console.log("AFTER PUSH");
+        console.log(result.results);
+    });
+    await Promise.all(campPromises);
+    // queried.data.data.forEach( async (camp, i) => {
+    //     console.log("BEFORE SEARCHING", i)
+    //     matchedCampground = await Campground.find({title: camp.name});
+    //     console.log("AFTER SEARCHING", i)
+    //     result.results.push(matchedCampground);
+    //     console.log("AFTER PUSH", i);
+    //     console.log(result.results);
+    //     // if(camp.images[0] && camp.name){
+    //     //     const price = Math.floor(Math.random() * 20) + 10;
+    //     //     const campground = new Campground({
+    //     //     //do reverse lookup here!!!!!from the coordinates if no address available
+    //     //     location: camp.addresses[0] ? 
+    //     //         `${camp.addresses[0].line1} ${camp.addresses[0].city} ${camp.addresses[0].stateCode}`: 
+    //     //         await reverseGeo([Number.parseFloat( camp.longitude, 10), Number.parseFloat( camp.latitude, 10)]),
+
+    //     //     title: camp.name,
+
+    //     //     description: camp.description,
+    //     //     //assign a random price if there is no cost
+    //     //     price: camp.fees[0] ? camp.fees[0].cost : price,
+
+    //     //     geometry: {
+    //     //         type: 'Point',
+    //     //         coordinates: [
+    //     //             camp.longitude,
+    //     //             camp.latitude
+    //     //         ]
+    //     //     }
+    //     //     }) 
+    //     //     await upload(camp.images.map(img => img.url), campground);
+    //     //     await User.findByIdAndUpdate(mainAuth, {$push:{campgrounds: campground}});
+    //     //     //add cloud uploader for below. use only and save if campground not yet in database otherwise just show it
+    //     //     if(campground.success !== 'fail') {
+    //     //         await campground.save();
+    //     //     }
+    //     //     result.results.push()
+    //     // }
+    // })
+    console.log("OUTSIDE",result.results);
+    res.send(result);
 
     
 }

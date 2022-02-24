@@ -1,21 +1,20 @@
 # YelpCamp United States
-<hr>
 This is my first full stack CRUD project that allows users to view, post, edit, delete, and leave reviews on the campgrounds. 
 <br><br>
 <b>Features that I added/will be added on top of Colt Steele's Web Development Bootcamp: </b>
 <br>
 
 1.**[NPS API](https://www.nps.gov/subjects/developer/guides.htm)** - I integrated real campgrounds in the United States using an API.<br>
-2. **☀️light and 🌙dark mode** - I used JS DOM Manipulation, localStorage, and Cookies to implement a theme feature<br>
-3. **🌳My campgrounds** - This feature allows users to show the campgrounds they uploaded to YelpCamp! <br>
-4. **📄pagination feature** - I also used DOM Manipulation, cookies, and Mongoose to implement pagination. This augments the performance by loading only few datas the the user wants rather than loading a whole single resource.<br>
-5. 🔍**Search Feature** ➡️ <i>Coming soon!</i> 
+1. **☀️light and 🌙dark mode** - I used JS DOM Manipulation, localStorage, and Cookies to implement a theme feature<br>
+2. **🌳My campgrounds** - This feature allows users to show the campgrounds they uploaded to YelpCamp! <br>
+3. **📄pagination feature** - I also used DOM Manipulation, cookies, and Mongoose to implement pagination. This augments the performance by loading only few datas the the user wants rather than loading a whole single resource.<br>
+4. 🔍**Search Feature** ➡️ <i>Coming soon!</i> 
 
-<hr>
+
 
 ## 🔨Stacks
 YelpCamp is built with **MEN** (*Mongo, Express, and Node*) stack.
-<hr>
+
 
 ## 👀 Previews
 #### Login
@@ -57,7 +56,7 @@ YelpCamp is built with **MEN** (*Mongo, Express, and Node*) stack.
 #### Reviews
 <img src="assets/imgs/review.png" width="100%" alt="Home page">
 
-<hr>
+
 
 ## 🧰Tools
 
@@ -69,7 +68,7 @@ YelpCamp is built with **MEN** (*Mongo, Express, and Node*) stack.
 5.  #### Embedded Javascript
 6.  #### Axios
 7.  #### Joi
-<hr>
+
 
 ## 💻 To run on your local machine:
 ### Prerequisties:
@@ -101,6 +100,7 @@ YelpCamp is built with **MEN** (*Mongo, Express, and Node*) stack.
 - API_KEY=[value]
 - OWNER_ID=[value]
 6. Open a new terminal and type `mongod`. The project will not start until this is opened ⚠️
-7. On the previous terminal, type 
-   `node app.js` or `nodemon app.js` (*recommended*)
-8. Once you see "Database connected", go to your preferred browser, then go to *localhost:3000*
+7. Now to seeds your database, on the previous terminal, type `node seeds/index.js`. (After getting a response of done on your terminal, wait for 3-8 seconds to let all the campgrounds' images get uploaded to cloudinary).
+8. Hit CTRL+C to exit the current process.
+9. Then type `node app.js` or `nodemon app.js` (*recommended*)
+10. Once you see "Database connected", go to your preferred browser, then go to *localhost:3000*
