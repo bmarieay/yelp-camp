@@ -62,43 +62,49 @@ module.exports.index = async (req, res) => {
     let matchedCampground;
     if(!queried.data.data.length){
         //do nothing if there is no result in api
-        return res.send("NOTHING FOUND IN API");
+        //store empty object in result for rendering in index template
+        //store query for client use
+        result.results = queried.data.data;
+        result.query = q;
+        return res.render('campgrounds/index', {result})
     } else {
         //If found: save to database or just render if it already exists
-       
+       //TODO: DO NOT BASE OFF OF THE FETCHED DATA BECAUSE IT HAS DIFFERENT JSON FORMAT FROM 
+       //THE CAMPGROUND SCHEMA DEFINED
         const campPromises = queried.data.data.map(async function(camp) {
-        matchedCampground = await Campground.find({title: camp.name});
-        if(!matchedCampground.length && camp.images[0]){
-            //make a new campground 
-            const campground = new Campground({
-            location: camp.addresses[0] ? 
-                `${camp.addresses[0].line1} ${camp.addresses[0].city} ${camp.addresses[0].stateCode}`: 
-                await reverseGeo([Number.parseFloat( camp.longitude, 10), Number.parseFloat( camp.latitude, 10)]),
+            matchedCampground = await Campground.find({title: camp.name});
+            if(!matchedCampground.length && camp.images[0]){
+                //make a new campground 
+                const campground = new Campground({
+                location: camp.addresses[0] ? 
+                    `${camp.addresses[0].line1} ${camp.addresses[0].city} ${camp.addresses[0].stateCode}`: 
+                    await reverseGeo([Number.parseFloat( camp.longitude, 10), Number.parseFloat( camp.latitude, 10)]),
 
-            title: camp.name,
+                title: camp.name,
 
-            description: camp.description,
-            //assign a random price if there is no cost
-            price: camp.fees[0] ? camp.fees[0].cost : price,
-            
+                description: camp.description,
+                //assign a random price if there is no cost
+                price: camp.fees[0] ? camp.fees[0].cost : price,
+                
 
-            images: camp.images.map(c => ({ url: c.url})),
+                images: camp.images.map(c => ({ url: c.url})),
 
-            geometry: {
-                type: 'Point',
-                coordinates: [
-                    camp.longitude,
-                    camp.latitude
-                ]
+                geometry: {
+                    type: 'Point',
+                    coordinates: [
+                        camp.longitude,
+                        camp.latitude
+                    ]
+                }
+                }) 
+                //NOTE:decide if need to save later
+                // await campground.save();
+                result.results.push(campground);
+            } else {
+                //MATCH FOUND
+                result.results.push(camp);
             }
-            }) 
-            await campground.save();
-            result.results.push(campground);
-        } else {
-            //MATCH FOUND
-            result.results.push(camp);
-        }
-    });
+        });
         await Promise.all(campPromises);
     }
     // queried.data.data.forEach( async (camp, i) => {
@@ -133,6 +139,7 @@ module.exports.index = async (req, res) => {
     //         result.results.push()
     //     }
     // })
+    // res.render('campgrounds/index', {result});
     res.send(result);
 }
 

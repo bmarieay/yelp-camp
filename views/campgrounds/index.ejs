@@ -1,25 +1,26 @@
 <% layout('layouts/boilerplate') %>
 <div id="cluster-map" class="border border-dark"></div>
-<h1 class="title">All Campgrounds</h1>
 
-
-<nav aria-label="Campgrounds navigation pages" class="fw-bold">
-    <ul class="pagination pagination-sm d-flex justify-content-center">
-      <li class="page-item prev-btn"><a class="page-link page-prev" href="">Prev</a></li>
-      <li class="page-item align-self-center"><a class="page-link page-num" href="">1</a></li>
-      <li class="page-item align-self-center"><a class="page-link page-num" href="">2</a></li>
-      <li class="page-item align-self-center"><a class="page-link page-num" href="">3</a></li>
-      <li class="page-item page-last align-self-center"><a class="page-link page-num" href="">4</a></li>
-      <li class="page-item page-last align-self-center"><a class="page-link page-num" href="">5</a></li>
-      <li class="page-item next-btn align-self-center"><a class="page-link page-next" href="">Next</a></li>
-    </ul>
-</nav>
+<% if(result.results.length) {%> 
+    <h1 class="title">All Campgrounds</h1>
+    <nav aria-label="Campgrounds navigation pages" class="fw-bold">
+        <ul class="pagination pagination-sm d-flex justify-content-center">
+        <li class="page-item prev-btn"><a class="page-link page-prev" href="">Prev</a></li>
+        <li class="page-item align-self-center"><a class="page-link page-num" href="">1</a></li>
+        <li class="page-item align-self-center"><a class="page-link page-num" href="">2</a></li>
+        <li class="page-item align-self-center"><a class="page-link page-num" href="">3</a></li>
+        <li class="page-item page-last align-self-center"><a class="page-link page-num" href="">4</a></li>
+        <li class="page-item page-last align-self-center"><a class="page-link page-num" href="">5</a></li>
+        <li class="page-item next-btn align-self-center"><a class="page-link page-next" href="">Next</a></li>
+        </ul>
+    </nav>
+<% } %> 
 
 
 <div class="gutter">
     <a href="/campgrounds/new" class="accent">Add Campground</a>
 </div>
-
+<% if(result.results.length) {%> 
 <!-- show each campground -->
     <% for(let campground of result.results) {%>
         <div class="card mb-3 border border-secondary rounded rounded-1 theme-target">
@@ -50,7 +51,9 @@
             </div>
         </div>
     <% } %>
-
+<% } else {%> 
+    <h1 class="pt-4">No result found in "<%= result.query %>" </h1>
+<% } %> 
     <script>
         const mapToken = '<%- process.env.MAPBOX_TOKEN %>';
         //map will be looking for features to search from
