@@ -107,6 +107,10 @@
     border-color: var(--univ-light);
 }
 
+.form-select{
+    width: max-content;
+}
+
 #map, #cluster-map{
     width: 100%;
 }

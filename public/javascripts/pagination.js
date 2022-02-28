@@ -6,6 +6,7 @@ const nextContainer = document.querySelector('.next-btn');
 let max = Math.ceil(resultLength / 20.0);
 console.log("max page:", max, " length result:", resultLength)
 //update total later according to data
+//TODO: CHANGE MAX SO THAT IT WILL DYNAMICALLY ADJUST WHEN USER IS SEARCHING
 const pageNumber = (total, max, current) => {
     const half = Math.round(max / 2);
     console.log("total:", total)
@@ -56,21 +57,20 @@ function initialize (){
 
 
 function readCookie() {
-    var allcookies = document.cookie;
+    let allcookies = document.cookie;
     let key, value;
     
     // Get all the cookies pairs in an array
     cookiearray = allcookies.split(';');
-    
     // Now take key value pair out of this array
-    for(var i=0; i<cookiearray.length; i++) {
+    for(let i=0; i<cookiearray.length; i++) {
        key = cookiearray[i].split('=')[0];
        if(key === 'currentPage'){
             value = parseInt(cookiearray[i].split('=')[1]);
        }
     }
     return value;
- }
+}
 
 //calls the new list of pages
 function renderCorrectPages(currentPage){
@@ -131,4 +131,3 @@ for(let button of pageButton){
         break;
     }
 }
-
