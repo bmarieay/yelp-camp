@@ -33,7 +33,9 @@
 
       <ul class="list-group list-group-flush theme-target">
         <li class="list-group-item text-muted theme-target"><%= campground.location %></li>
-        <li class="list-group-item theme-target">Submitted by <%= campground.author.username %></li>
+        <% if(campground.author) {%> 
+          <li class="list-group-item theme-target">Submitted by <%= campground.author.username %></li>
+        <% } %> 
         <li class="list-group-item theme-target">$<%= campground.price %>/night</li>
       </ul>
 
