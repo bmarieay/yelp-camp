@@ -109,6 +109,12 @@
 
 .form-select{
     width: max-content;
+    background-color: var(--univ-light);
+}
+
+.form-select.dark-theme{
+    background-color: var(--univ-dark);
+    color: var(--univ-light);
 }
 
 #map, #cluster-map{
