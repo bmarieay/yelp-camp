@@ -1,7 +1,7 @@
 <% layout('layouts/boilerplate') %>
 <div id="cluster-map" class="border border-dark"></div>
 
-<% if(result.results.length && !result.filter.length) {%> 
+<% if(result.results.length && !result.filter) {%> 
     <h1 class="title">All Campgrounds</h1>
     <nav aria-label="Campgrounds navigation pages" class="fw-bold">
         <ul class="pagination pagination-sm d-flex justify-content-center">
@@ -14,10 +14,12 @@
         <li class="page-item next-btn align-self-center"><a class="page-link page-next" href="">Next</a></li>
         </ul>
     </nav>
+<% } else  {%> 
+    <h1>Showing campgrounds at <%= result.filter %> </h1>
 <% } %> 
 
 <form action="/campgrounds">
-    <select class="form-select" name="q" aria-label="Default select example" onchange="this.form.submit()">
+    <select class="form-select theme-target" name="q" aria-label="Default select example" onchange="this.form.submit()">
         <option selected>Select a state</option>
         <option value="AL">Alabama</option>
         <option value="AK">Alaska</option>
@@ -113,8 +115,12 @@
         //map will be looking for features to search from
         const campgrounds = {features: <%- JSON.stringify(result.results) %>};
         const resultLength = <%-result.allItemsFetched %>;
+        const filter = '<%-result.filter%>';
     </script>
     <noscript><input type=”submit” value=”Submit”></noscript>
       
     <script src="/javascripts/clusterMap.js"></script>
+    <% if(!result.filter) {%> 
     <script src="/javascripts/pagination.js"></script>
+    <% } %> 
+    <script src="/javascripts/searchMode.js"></script>

@@ -41,11 +41,6 @@ module.exports.index = async (req, res) => {
     const max = Math.ceil(result.allItemsFetched / 20.0);
     let {page, limit, q} = req.query;
     // console.log(q)
-    if(!q){
-        res.clearCookie('filter');
-    } else {
-        res.cookie('filter', q)
-    }
     page = parseInt(page);
         limit = parseInt(limit);
         if(!page || page < 0){
@@ -75,6 +70,7 @@ module.exports.index = async (req, res) => {
         res.cookie('currentPage', page);
 
     if(!q){//if there is no searching passed
+        res.clearCookie('filter');
         const campgrounds = await Campground.find().limit(limit).skip(startIndex);
         result.results = campgrounds;
         //for determining max number of pages
@@ -82,9 +78,9 @@ module.exports.index = async (req, res) => {
         // res.send(result);
     }
     //user searched for something
-    // res.cookie('filter', q);
     const queried = await axios.get(`https://developer.nps.gov/api/v1/campgrounds?limit=15&stateCode=${q}`, config);
     let matchedCampground;  
+    result.filter = q;
     if(queried.data.data.length) {
         //If found: save to database or just render if it already exists
        //TODO: DO NOT BASE OFF OF THE FETCHED DATA BECAUSE IT HAS DIFFERENT JSON FORMAT FROM 
@@ -133,9 +129,7 @@ module.exports.index = async (req, res) => {
         // result.results = queried.data.data;
         result.query = q;
     }
-    const {filter} = req.cookies;
-    result.filter = filter;
-    console.log(result)
+
     // res.send(result);
     res.render('campgrounds/index', {result})
 }
