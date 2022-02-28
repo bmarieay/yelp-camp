@@ -7,6 +7,7 @@ const axios = require("axios");
 const key = process.env.API_KEY;
 const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
 //TODO: AFTER NEED TO REFACTOR ASYNCS TO MIDDLEWARE
+//SETUP A COOKIE FOR SEARCH MODE
 mbxGeocoding({ accessToken: mapBoxToken });
 const config = {
     params: 
@@ -14,6 +15,22 @@ const config = {
         api_key : key
     } 
 };
+const reverseGeo = async (coordinates) => {
+    try {
+        const geoData = await geocoder.reverseGeocode({
+            query: coordinates,
+            limit: 1    
+        }).send()
+
+        if(geoData.body.features[0]){
+            return geoData.body.features[0].text;
+        } else{
+            return 'NO LOCATION'
+        }
+    } catch (error) {
+        console.log("ERROR!:", error)
+    }
+}
 
 //TODO: MAKE A MIDDLEWARE FOR RENDERING INDEX
 module.exports.index = async (req, res) => {
@@ -23,8 +40,7 @@ module.exports.index = async (req, res) => {
     result.allItemsFetched = allCampgrounds.map( camp => camp).length;
     const max = Math.ceil(result.allItemsFetched / 20.0);
     let {page, limit, q} = req.query;
-    if(!q){//if there is no searching passed
-        page = parseInt(page);
+    page = parseInt(page);
         limit = parseInt(limit);
         if(!page || page < 0){
             page=1;//very first page
@@ -37,7 +53,6 @@ module.exports.index = async (req, res) => {
         }
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit;
-        const campgrounds = await Campground.find().limit(limit).skip(startIndex);
         //get info for the pagination(prev and next)
         if(startIndex > 0){
             result.previous = {
@@ -52,28 +67,24 @@ module.exports.index = async (req, res) => {
             }
         }
         res.cookie('currentPage', page);
+
+    if(!q){//if there is no searching passed
+        const campgrounds = await Campground.find().limit(limit).skip(startIndex);
         result.results = campgrounds;
         //for determining max number of pages
         return res.render('campgrounds/index', {result});
         // res.send(result);
     }
     //user searched for something
-    const queried = await axios.get(`https://developer.nps.gov/api/v1/campgrounds?limit=3&q=${q}`, config);
-    let matchedCampground;
-    if(!queried.data.data.length){
-        //do nothing if there is no result in api
-        //store empty object in result for rendering in index template
-        //store query for client use
-        result.results = queried.data.data;
-        result.query = q;
-        return res.render('campgrounds/index', {result})
-    } else {
+    const queried = await axios.get(`https://developer.nps.gov/api/v1/campgrounds?limit=15&stateCode=${q}`, config);
+    let matchedCampground;  
+    if(queried.data.data.length) {
         //If found: save to database or just render if it already exists
        //TODO: DO NOT BASE OFF OF THE FETCHED DATA BECAUSE IT HAS DIFFERENT JSON FORMAT FROM 
        //THE CAMPGROUND SCHEMA DEFINED
         const campPromises = queried.data.data.map(async function(camp) {
             matchedCampground = await Campground.find({title: camp.name});
-            if(!matchedCampground.length && camp.images[0]){
+            if(camp.images[0]){
                 //make a new campground 
                 const campground = new Campground({
                 location: camp.addresses[0] ? 
@@ -84,7 +95,7 @@ module.exports.index = async (req, res) => {
 
                 description: camp.description,
                 //assign a random price if there is no cost
-                price: camp.fees[0] ? camp.fees[0].cost : price,
+                price: camp.fees[0] ? camp.fees[0].cost : 0,
                 
 
                 images: camp.images.map(c => ({ url: c.url})),
@@ -98,49 +109,28 @@ module.exports.index = async (req, res) => {
                 }
                 }) 
                 //NOTE:decide if need to save later
-                // await campground.save();
-                result.results.push(campground);
-            } else {
-                //MATCH FOUND
-                result.results.push(camp);
+                if(matchedCampground.length){
+                    result.results.push(...matchedCampground);
+                    console.log(result.results)
+                } else {
+                    console.log("NOTHING MATCHED");
+                    // await campground.save();
+                    result.results.push(campground);
+                }
             }
+
         });
         await Promise.all(campPromises);
+    } else {
+         //do nothing if there is no result in api
+        //store empty object in result for rendering in index template
+        //store query for client use
+        // result.results = queried.data.data;
+        result.query = q;
     }
-    // queried.data.data.forEach( async (camp, i) => {
-    //     if(camp.images[0] && camp.name){
-    //         const price = Math.floor(Math.random() * 20) + 10;
-    //         const campground = new Campground({
-    //         //do reverse lookup here!!!!!from the coordinates if no address available
-    //         location: camp.addresses[0] ? 
-    //             `${camp.addresses[0].line1} ${camp.addresses[0].city} ${camp.addresses[0].stateCode}`: 
-    //             await reverseGeo([Number.parseFloat( camp.longitude, 10), Number.parseFloat( camp.latitude, 10)]),
 
-    //         title: camp.name,
-
-    //         description: camp.description,
-    //         //assign a random price if there is no cost
-    //         price: camp.fees[0] ? camp.fees[0].cost : price,
-
-    //         geometry: {
-    //             type: 'Point',
-    //             coordinates: [
-    //                 camp.longitude,
-    //                 camp.latitude
-    //             ]
-    //         }
-    //         }) 
-    //         await upload(camp.images.map(img => img.url), campground);
-    //         await User.findByIdAndUpdate(mainAuth, {$push:{campgrounds: campground}});
-    //         //add cloud uploader for below. use only and save if campground not yet in database otherwise just show it
-    //         if(campground.success !== 'fail') {
-    //             await campground.save();
-    //         }
-    //         result.results.push()
-    //     }
-    // })
-    // res.render('campgrounds/index', {result});
-    res.send(result);
+    // res.send(result);
+    res.render('campgrounds/index', {result})
 }
 
 module.exports.renderNewForm = (req, res) => {

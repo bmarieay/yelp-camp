@@ -6,6 +6,7 @@ const nextContainer = document.querySelector('.next-btn');
 let max = Math.ceil(resultLength / 20.0);
 console.log("max page:", max, " length result:", resultLength)
 //update total later according to data
+//TODO: CHANGE MAX SO THAT IT WILL DYNAMICALLY ADJUST WHEN USER IS SEARCHING
 const pageNumber = (total, max, current) => {
     const half = Math.round(max / 2);
     console.log("total:", total)
