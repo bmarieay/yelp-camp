@@ -6,7 +6,7 @@ const nextContainer = document.querySelector('.next-btn');
 let max = Math.ceil(resultLength / 20.0);
 console.log("max page:", max, " length result:", resultLength)
 //update total later according to data
-//TODO: CHANGE MAX SO THAT IT WILL DYNAMICALLY ADJUST WHEN USER IS SEARCHING
+
 const pageNumber = (total, max, current) => {
     const half = Math.round(max / 2);
     console.log("total:", total)
@@ -28,19 +28,13 @@ const pageNumber = (total, max, current) => {
     } else {
         previousContainer.removeAttribute('tabindex');
         previousContainer.classList.remove('disabled');
-        // prevBtn.classList.remove('text-muted');
-
     }
-    // alert(current);
-    // alert(total);
+
     if(current === total){
-        // nextBtn.classList.add('text-muted');
-        // nextBtn.removeAttribute('href');
         nextContainer.classList.add('disabled')
     } else {
         nextContainer.classList.remove('disabled');
     }
-    
     
     return Array.from({length: max}, (_, i) => (i + 1) + from)
 }
@@ -75,7 +69,6 @@ function readCookie() {
 //calls the new list of pages
 function renderCorrectPages(currentPage){
     //set the new page
-    // localStorage.setItem("currentPage", currentPage);
     document.cookie = `currentPage=${currentPage}`;
     initialize();
 }
@@ -114,7 +107,7 @@ prevBtn.addEventListener('click', function() {
         
 })
 
-    
+//next button
 nextBtn.addEventListener('click', function() {
         if(readCookie() < max){
             paginationHandler.call(
@@ -125,6 +118,7 @@ nextBtn.addEventListener('click', function() {
     }
 })
 
+//apply accent color to current page 
 for(let button of pageButton){
     if(parseInt(button.innerText) === readCookie()){
         button.classList.add('active-btn');

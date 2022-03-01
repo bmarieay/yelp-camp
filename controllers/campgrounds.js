@@ -6,7 +6,10 @@ const mapBoxToken = process.env.MAPBOX_TOKEN;
 const axios = require("axios");
 const key = process.env.API_KEY;
 const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
-//TODO: AFTER NEED TO REFACTOR ASYNCS TO MIDDLEWARE
+/*
+** TODO:IMPROVE ACCESSIBLITY
+**      AFTER NEED TO REFACTOR ASYNCS TO MIDDLEWARE
+*/
 //SETUP A COOKIE FOR SEARCH MODE
 mbxGeocoding({ accessToken: mapBoxToken });
 const config = {
@@ -40,7 +43,6 @@ module.exports.index = async (req, res) => {
     result.allItemsFetched = allCampgrounds.map( camp => camp).length;
     const max = Math.ceil(result.allItemsFetched / 20.0);
     let {page, limit, q} = req.query;
-    // console.log(q)
     page = parseInt(page);
         limit = parseInt(limit);
         if(!page || page < 0){
@@ -69,24 +71,23 @@ module.exports.index = async (req, res) => {
         }
         res.cookie('currentPage', page);
 
-    if(!q){//if there is no searching passed
+    if(!q){
+        //if there is no filter passed just render all campgrounds
         res.clearCookie('filter');
         const campgrounds = await Campground.find().limit(limit).skip(startIndex);
         result.results = campgrounds;
-        //for determining max number of pages
         return res.render('campgrounds/index', {result});
-        // res.send(result);
     }
-    //user searched for something
-    const queried = await axios.get(`https://developer.nps.gov/api/v1/campgrounds?limit=15&stateCode=${q}`, config);
+
+    //user filtered campgrounds
+    const queried = await axios.get(`https://developer.nps.gov/api/v1/campgrounds?limit=20&stateCode=${q}`, config);
     let matchedCampground;  
     result.filter = q;
     if(queried.data.data.length) {
         //If found: save to database or just render if it already exists
-       //TODO: DO NOT BASE OFF OF THE FETCHED DATA BECAUSE IT HAS DIFFERENT JSON FORMAT FROM 
-       //THE CAMPGROUND SCHEMA DEFINED
         const campPromises = queried.data.data.map(async function(camp) {
-            matchedCampground = await Campground.find({title: camp.name});
+            //make a more narrow filter for matching
+            matchedCampground = await Campground.find({$and:[{title: camp.name},{description: camp.description}]});
             if(camp.images[0]){
                 //make a new campground 
                 const campground = new Campground({
@@ -97,10 +98,9 @@ module.exports.index = async (req, res) => {
                 title: camp.name,
 
                 description: camp.description,
-                //assign a random price if there is no cost
+                //assign no price if there is no cost
                 price: camp.fees[0] ? camp.fees[0].cost : 0,
                 
-
                 images: camp.images.map(c => ({ url: c.url})),
 
                 geometry: {
@@ -115,18 +115,16 @@ module.exports.index = async (req, res) => {
                 if(matchedCampground.length){
                     result.results.push(...matchedCampground);
                 } else {
-                    // await campground.save();
+                    await campground.save();
                     result.results.push(campground);
                 }
             }
-
         });
+
         await Promise.all(campPromises);
+
     } else {
-         //do nothing if there is no result in api
-        //store empty object in result for rendering in index template
-        //store query for client use
-        // result.results = queried.data.data;
+        // NOTHING FOUND IN API
         result.query = q;
     }
 
@@ -243,17 +241,17 @@ module.exports.editCampground = async (req, res) => {
     const {id} = req.params;
     //make this shorter later
     const campground = await Campground.findByIdAndUpdate(id, {...req.body.campground});//spread each properties
-    const imgs = req.files.map(f => ({ url: f.path, filename: f.filename }))
-    campground.images.push(...imgs)
+    const imgs = req.files.map(f => ({ url: f.path, filename: f.filename }));
+    campground.images.push(...imgs);
     await campground.save();
     if(req.body.deleteImages){
         for(let filename of req.body.deleteImages){
-            await cloudinary.uploader.destroy(filename)
+            await cloudinary.uploader.destroy(filename);
         }
-        await campground.updateOne({$pull: {images: {filename: {$in:  req.body.deleteImages}}}})
+        await campground.updateOne({$pull: {images: {filename: {$in:  req.body.deleteImages}}}});
     }
-    req.flash('success', 'Successfully updated campground!')
-    res.redirect(`/campgrounds/${campground._id}`)
+    req.flash('success', 'Successfully updated campground!');
+    res.redirect(`/campgrounds/${campground._id}`);
 }
 
 module.exports.deleteCampground = async (req, res) => {
