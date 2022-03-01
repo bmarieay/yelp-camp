@@ -14,11 +14,11 @@
         <li class="page-item next-btn align-self-center"><a class="page-link page-next" href="">Next</a></li>
         </ul>
     </nav>
-<% } else  {%> 
-    <h1>Showing campgrounds at <%= result.filter %> </h1>
+<% } else if(result.filter && result.results.length) {%> 
+    <h1 class="pb-3">Showing campgrounds at <%= result.filter %> </h1>
 <% } %> 
 
-<form action="/campgrounds">
+<form action="/campgrounds" class="pb-4">
     <select class="form-select theme-target" name="q" aria-label="Default select example" onchange="this.form.submit()">
         <option selected>Select a state</option>
         <option value="AL">Alabama</option>
@@ -75,7 +75,7 @@
 </form>
 
 <div class="gutter">
-    <a href="/campgrounds/new" class="accent">Add Campground</a>
+    <a href="/campgrounds/new" class="accent">Add a Campground</a>
 </div>
 <% if(result.results.length) {%> 
 <!-- show each campground -->
@@ -108,7 +108,7 @@
         </div>
     <% } %>
 <% } else {%> 
-    <h1 class="pt-4">No result found in "<%= result.query %>" </h1>
+    <h1 class="pt-4">Sorry, no campgrounds to show in <%= result.query %></h1>
 <% } %> 
     <script>
         const mapToken = '<%- process.env.MAPBOX_TOKEN %>';
