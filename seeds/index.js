@@ -8,6 +8,7 @@ const axios = require("axios");
 const key = process.env.API_KEY;
 const mainAuth = process.env.OWNER_ID;
 const { cloudinary } = require("../cloudinary");
+const {reverseGeo} = require("../tools/index");
 // const mainAuth = '62040b04c7e98a10d8c2d8ac';
 
 //get the model 
