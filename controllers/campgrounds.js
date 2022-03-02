@@ -8,7 +8,6 @@ const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
 const {config, reverseGeo} = require("../tools/index");
 /*
 ** TODO:IMPROVE ACCESSIBLITY
-**      AFTER NEED TO REFACTOR ASYNCS TO MIDDLEWARE
 */
 module.exports.index = async (req, res) => {
     const result = {};
@@ -94,9 +93,6 @@ module.exports.index = async (req, res) => {
             }
         });
         await Promise.all(campPromises);
-    } else {
-        // NOTHING FOUND IN API
-        result.query = q;
     }
     // res.send(result);
     res.render('campgrounds/index', {result})

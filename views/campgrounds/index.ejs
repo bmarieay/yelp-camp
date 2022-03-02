@@ -15,7 +15,7 @@
         </ul>
     </nav>
 <% } else if(result.filter && result.results.length) {%> 
-    <h1 class="pb-3">Showing campgrounds at <%= result.filter %> </h1>
+    <h1 class="pb-3" class="labelMode">Showing campgrounds at <span class="state-label"></span></h1>
 <% } %> 
 
 <form action="/campgrounds" class="pb-4">
@@ -108,7 +108,7 @@
         </div>
     <% } %>
 <% } else {%> 
-    <h1 class="pt-4">Sorry, no campgrounds to show in <%= result.query %></h1>
+    <h1 class="pt-4">Sorry, no campgrounds to show in <span class="state-label"></span></h1>
 <% } %> 
     <script>
         const mapToken = '<%- process.env.MAPBOX_TOKEN %>';
