@@ -4,13 +4,10 @@ const nextBtn = document.querySelector('.page-next');
 const previousContainer = document.querySelector('.prev-btn');
 const nextContainer = document.querySelector('.next-btn');
 let max = Math.ceil(resultLength / 20.0);
-console.log("max page:", max, " length result:", resultLength)
 //update total later according to data
 
 const pageNumber = (total, max, current) => {
     const half = Math.round(max / 2);
-    console.log("total:", total)
-    console.log("half:", half, " current:", current)
     let to = max;
     
     if(current + half >= total){
@@ -20,7 +17,6 @@ const pageNumber = (total, max, current) => {
     }
     
     let from = to - max;
-    console.log("from: ", from, "   to: ", to)
 
     if(current <= 1){
         previousContainer.classList.add('disabled');
@@ -45,7 +41,6 @@ initialize();//initialize everything for new load
 
 function initialize (){
     let arrayofBtns = pageNumber(max, 5, readCookie());
-    console.log(arrayofBtns)
     generateButtons(pageButton, arrayofBtns);
 }
 

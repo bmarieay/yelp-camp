@@ -20,7 +20,7 @@
 
 <form action="/campgrounds" class="pb-4">
     <select class="form-select theme-target" name="q" aria-label="Default select example" onchange="this.form.submit()">
-        <option selected>Select a state</option>
+        <option selected disabled aria-disabled="true">Select a state</option>
         <option value="AL">Alabama</option>
         <option value="AK">Alaska</option>
         <option value="AZ">Arizona</option>
@@ -82,20 +82,20 @@
     <% for(let campground of result.results) {%>
         <div class="card mb-3 border border-secondary rounded rounded-1 theme-target">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-6 col-lg-4">
                     <!-- campground.images[0].url.includes('cloudinary')? campground.images[0].indexSize : -->
                     <% if(campground.images.length) {%>
-                        <img src="<%= campground.images[0].url.includes('cloudinary')? campground.images[0].indexSize : campground.images[0].url %>" alt="" class="img-fluid">
+                        <img src="<%= campground.images[0].url %>" alt="" class="img-fluid">
                     <% } else {%>
                         <img class="img-fluid" src="https://res.cloudinary.com/maranttt/image/upload/v1643679209/YelpCamp/nhzmrsjscjzcll52hpod.jpg" alt="">
                     <% } %>
                 </div>
-                <div class="col-md-8">
+                <div class="col-md-6 col-lg-8">
                     <div class="card-body">
                         <h5 class="card-title"><a href="/campgrounds/<%= campground._id %>" class="accent"><%= campground.title %></a></h5>
                             <!-- shorten description if it is long -->
                             <% if(campground.description.length >= 200){ %>
-                                <p class="card-text"><%= campground.description.substring(0, 220) %>...</p>
+                                <p class="card-text"><%= campground.description.substring(0, 190) %>...</p>
                             <% } else {%>
                                 <p class="card-text"><%= campground.description %></p>
                             <% } %> 
@@ -121,6 +121,7 @@
       
     <script src="/javascripts/clusterMap.js"></script>
     <% if(!result.filter) {%> 
-    <script src="/javascripts/pagination.js"></script>
+        <script src="/javascripts/pagination.js"></script>
+    <% } else {%> 
+        <script src="/javascripts/searchMode.js"></script>
     <% } %> 
-    <script src="/javascripts/searchMode.js"></script>

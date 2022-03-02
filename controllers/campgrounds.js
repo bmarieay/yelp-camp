@@ -53,7 +53,7 @@ module.exports.index = async (req, res) => {
     }
 
     //user filtered campgrounds
-    const queried = await axios.get(`https://developer.nps.gov/api/v1/campgrounds?limit=20&stateCode=${q}`, config);
+    const queried = await axios.get(`https://developer.nps.gov/api/v1/campgrounds?limit=50&stateCode=${q}`, config);
     let matchedCampground;  
     result.filter = q;
     if(queried.data.data.length) {

@@ -12,9 +12,7 @@ const ImageSchema = new Schema({
 ImageSchema.virtual('thumbnail').get(function () {
     return this.url.replace('/upload', '/upload/w_200')
 })
-ImageSchema.virtual('indexSize').get(function () {
-    return this.url.replace('/upload', '/upload/w_415,h_280')
-})
+
 ImageSchema.virtual('showSize').get(function () {
     return this.url.replace('/upload', '/upload/h_480')
 })
