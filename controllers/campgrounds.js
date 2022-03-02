@@ -61,47 +61,43 @@ module.exports.index = async (req, res) => {
         //If found: save to database or just render if it already exists
         const campPromises = queried.data.data.map(async function(camp) {
             //make a more narrow filter for matching
-            matchedCampground = await Campground.find({$and:[{title: camp.name},{description: camp.description}]});
             if(camp.images[0]){
+                matchedCampground = await Campground.find({$and:[{title: camp.name},{description: camp.description}]});
                 //make a new campground 
-                const campground = new Campground({
-                location: camp.addresses[0] ? 
-                    `${camp.addresses[0].line1} ${camp.addresses[0].city} ${camp.addresses[0].stateCode}`: 
-                    await reverseGeo([Number.parseFloat( camp.longitude, 10), Number.parseFloat( camp.latitude, 10)]),
-
-                title: camp.name,
-
-                description: camp.description,
-                //assign no price if there is no cost
-                price: camp.fees[0] ? camp.fees[0].cost : 0,
-                
-                images: camp.images.map(c => ({ url: c.url})),
-
-                geometry: {
-                    type: 'Point',
-                    coordinates: [
-                        camp.longitude,
-                        camp.latitude
-                    ]
-                }
-                }) 
-                //NOTE:decide if need to save later
                 if(matchedCampground.length){
                     result.results.push(...matchedCampground);
                 } else {
+                    const campground = new Campground({
+                        location: camp.addresses[0] ? 
+                            `${camp.addresses[0].line1} ${camp.addresses[0].city} ${camp.addresses[0].stateCode}`: 
+                            await reverseGeo([Number.parseFloat( camp.longitude, 10), Number.parseFloat( camp.latitude, 10)]),
+        
+                        title: camp.name,
+        
+                        description: camp.description,
+                        //assign no price if there is no cost
+                        price: camp.fees[0] ? camp.fees[0].cost : 0,
+                        
+                        images: camp.images.map(c => ({ url: c.url})),
+        
+                        geometry: {
+                            type: 'Point',
+                            coordinates: [
+                                camp.longitude,
+                                camp.latitude
+                            ]
+                        }
+                    }) 
                     await campground.save();
                     result.results.push(campground);
                 }
             }
         });
-
         await Promise.all(campPromises);
-
     } else {
         // NOTHING FOUND IN API
         result.query = q;
     }
-
     // res.send(result);
     res.render('campgrounds/index', {result})
 }
