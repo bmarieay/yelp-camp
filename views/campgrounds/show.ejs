@@ -33,11 +33,13 @@
 
       <ul class="list-group list-group-flush theme-target">
         <li class="list-group-item text-muted theme-target"><%= campground.location %></li>
-        <li class="list-group-item theme-target">Submitted by <%= campground.author.username %></li>
+        <% if(campground.author) {%> 
+          <li class="list-group-item theme-target">Submitted by <%= campground.author.username %></li>
+        <% } %> 
         <li class="list-group-item theme-target">$<%= campground.price %>/night</li>
       </ul>
 
-      <% if(currentUser && campground.author.equals(currentUser._id)){ %> 
+      <% if(currentUser && campground.author && campground.author.equals(currentUser._id)){ %> 
         <div class="card-body">
           <a href="/campgrounds/<%= campground._id%>/edit" class="btn btn-info card-link">Edit</a>
           <form class="d-inline card-link" action="/campgrounds/<%= campground._id%>?_method=DELETE" method="POST" >

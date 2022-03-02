@@ -8,6 +8,7 @@ const axios = require("axios");
 const key = process.env.API_KEY;
 const mainAuth = process.env.OWNER_ID;
 const { cloudinary } = require("../cloudinary");
+const {reverseGeo} = require("../tools/index");
 // const mainAuth = '62040b04c7e98a10d8c2d8ac';
 
 //get the model 
@@ -47,23 +48,6 @@ const processDatas = async () => {
     } catch (e) {
         console.log("Connection timeout")
         console.log(e);
-    }
-}
-
-const reverseGeo = async (coordinates) => {
-    try {
-        const geoData = await geocoder.reverseGeocode({
-            query: coordinates,
-            limit: 1    
-        }).send()
-
-        if(geoData.body.features[0]){
-            return geoData.body.features[0].text;
-        } else{
-            return 'NO LOCATION'
-        }
-    } catch (error) {
-        console.log("ERROR!:", error)
     }
 }
 

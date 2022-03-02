@@ -4,12 +4,10 @@ const nextBtn = document.querySelector('.page-next');
 const previousContainer = document.querySelector('.prev-btn');
 const nextContainer = document.querySelector('.next-btn');
 let max = Math.ceil(resultLength / 20.0);
-console.log("max page:", max, " length result:", resultLength)
 //update total later according to data
+
 const pageNumber = (total, max, current) => {
     const half = Math.round(max / 2);
-    console.log("total:", total)
-    console.log("half:", half, " current:", current)
     let to = max;
     
     if(current + half >= total){
@@ -19,7 +17,6 @@ const pageNumber = (total, max, current) => {
     }
     
     let from = to - max;
-    console.log("from: ", from, "   to: ", to)
 
     if(current <= 1){
         previousContainer.classList.add('disabled');
@@ -27,19 +24,13 @@ const pageNumber = (total, max, current) => {
     } else {
         previousContainer.removeAttribute('tabindex');
         previousContainer.classList.remove('disabled');
-        // prevBtn.classList.remove('text-muted');
-
     }
-    // alert(current);
-    // alert(total);
+
     if(current === total){
-        // nextBtn.classList.add('text-muted');
-        // nextBtn.removeAttribute('href');
         nextContainer.classList.add('disabled')
     } else {
         nextContainer.classList.remove('disabled');
     }
-    
     
     return Array.from({length: max}, (_, i) => (i + 1) + from)
 }
@@ -50,32 +41,29 @@ initialize();//initialize everything for new load
 
 function initialize (){
     let arrayofBtns = pageNumber(max, 5, readCookie());
-    console.log(arrayofBtns)
     generateButtons(pageButton, arrayofBtns);
 }
 
 
 function readCookie() {
-    var allcookies = document.cookie;
+    let allcookies = document.cookie;
     let key, value;
     
     // Get all the cookies pairs in an array
     cookiearray = allcookies.split(';');
-    
     // Now take key value pair out of this array
-    for(var i=0; i<cookiearray.length; i++) {
+    for(let i=0; i<cookiearray.length; i++) {
        key = cookiearray[i].split('=')[0];
        if(key === 'currentPage'){
             value = parseInt(cookiearray[i].split('=')[1]);
        }
     }
     return value;
- }
+}
 
 //calls the new list of pages
 function renderCorrectPages(currentPage){
     //set the new page
-    // localStorage.setItem("currentPage", currentPage);
     document.cookie = `currentPage=${currentPage}`;
     initialize();
 }
@@ -114,7 +102,7 @@ prevBtn.addEventListener('click', function() {
         
 })
 
-    
+//next button
 nextBtn.addEventListener('click', function() {
         if(readCookie() < max){
             paginationHandler.call(
@@ -125,10 +113,10 @@ nextBtn.addEventListener('click', function() {
     }
 })
 
+//apply accent color to current page 
 for(let button of pageButton){
     if(parseInt(button.innerText) === readCookie()){
         button.classList.add('active-btn');
         break;
     }
 }
-
