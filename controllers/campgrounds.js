@@ -6,9 +6,7 @@ const mapBoxToken = process.env.MAPBOX_TOKEN;
 const axios = require("axios");
 const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
 const {config, reverseGeo} = require("../tools/index");
-/*
-** TODO:IMPROVE ACCESSIBLITY
-*/
+
 module.exports.index = async (req, res) => {
     const result = {};
     result.results = [];
@@ -94,7 +92,6 @@ module.exports.index = async (req, res) => {
         });
         await Promise.all(campPromises);
     }
-    // res.send(result);
     res.render('campgrounds/index', {result})
 }
 
