@@ -1,44 +1,101 @@
 <% layout('layouts/boilerplate') %>
 <div id="cluster-map" class="border border-dark"></div>
-<h1 class="title">All Campgrounds</h1>
 
+<% if(result.results.length && !result.filter) {%> 
+    <h1 class="title">All Campgrounds</h1>
+    <nav aria-label="Campgrounds navigation pages" class="fw-bold">
+        <ul class="pagination pagination-sm d-flex justify-content-center">
+        <li class="page-item prev-btn"><a class="page-link page-prev" href="">Prev</a></li>
+        <li class="page-item align-self-center"><a class="page-link page-num" href="">1</a></li>
+        <li class="page-item align-self-center"><a class="page-link page-num" href="">2</a></li>
+        <li class="page-item align-self-center"><a class="page-link page-num" href="">3</a></li>
+        <li class="page-item page-last align-self-center"><a class="page-link page-num" href="">4</a></li>
+        <li class="page-item page-last align-self-center"><a class="page-link page-num" href="">5</a></li>
+        <li class="page-item next-btn align-self-center"><a class="page-link page-next" href="">Next</a></li>
+        </ul>
+    </nav>
+<% } else if(result.filter && result.results.length) {%> 
+    <h1 class="pb-3" class="labelMode">Showing campgrounds at <span class="state-label"></span></h1>
+<% } %> 
 
-<nav aria-label="Campgrounds navigation pages" class="fw-bold">
-    <ul class="pagination pagination-sm d-flex justify-content-center">
-      <li class="page-item prev-btn"><a class="page-link page-prev" href="">Prev</a></li>
-      <li class="page-item align-self-center"><a class="page-link page-num" href="">1</a></li>
-      <li class="page-item align-self-center"><a class="page-link page-num" href="">2</a></li>
-      <li class="page-item align-self-center"><a class="page-link page-num" href="">3</a></li>
-      <li class="page-item page-last align-self-center"><a class="page-link page-num" href="">4</a></li>
-      <li class="page-item page-last align-self-center"><a class="page-link page-num" href="">5</a></li>
-      <li class="page-item next-btn align-self-center"><a class="page-link page-next" href="">Next</a></li>
-    </ul>
-</nav>
-
+<form action="/campgrounds" class="pb-4">
+    <select class="form-select theme-target" name="q" aria-label="Default select example" onchange="this.form.submit()">
+        <option selected disabled aria-disabled="true">Select a state</option>
+        <option value="AL">Alabama</option>
+        <option value="AK">Alaska</option>
+        <option value="AZ">Arizona</option>
+        <option value="AR">Arkansas</option>
+        <option value="CA">California</option>
+        <option value="CO">Colorado</option>
+        <option value="CT">Connecticut</option>
+        <option value="DE">Delaware</option>
+        <option value="FL">Florida</option>
+        <option value="GA">Georgia</option>
+        <option value="HI">Hawaii</option>
+        <option value="ID">Idaho</option>
+        <option value="IL">Illinois</option>
+        <option value="IN">Indiana</option>
+        <option value="IA">Iowa</option>
+        <option value="KS">Kansas</option>
+        <option value="KY">Kentucky</option>
+        <option value="LA">Louisiana</option>
+        <option value="ME">Maine</option>
+        <option value="MD">Maryland</option>
+        <option value="MA">Massachusetts</option>
+        <option value="MI">Michigan</option>
+        <option value="MN">Minnesota</option>
+        <option value="MS">Mississippi</option>
+        <option value="MO">Missouri</option>
+        <option value="MT">Montana</option>
+        <option value="NE">Nebraska</option>
+        <option value="NV">Nevada</option>
+        <option value="NH">New Hampshire</option>
+        <option value="NJ">New Jersey</option>
+        <option value="NM">New Mexico</option>
+        <option value="NY">New York</option>
+        <option value="NC">North Carolina</option>
+        <option value="ND">North Dakota</option>
+        <option value="OH">Ohio</option>
+        <option value="OK">Oklahoma</option>
+        <option value="OR">Oregon</option>
+        <option value="PA">Pennsylvania</option>
+        <option value="RI">Rhode Island</option>
+        <option value="SC">South Carolina</option>
+        <option value="SD">South Dakota</option>
+        <option value="TN">Tennessee</option>
+        <option value="TX">Texas</option>
+        <option value="UT">Utah</option>
+        <option value="VT">Vermont</option>
+        <option value="VA">Virginia</option>
+        <option value="WA">Washington</option>
+        <option value="WV">West Virginia</option>
+        <option value="WI">Wisconsin</option>
+        <option value="WY">Wyoming</option>
+    </select>
+</form>
 
 <div class="gutter">
-    <a href="/campgrounds/new" class="accent">Add Campground</a>
+    <a href="/campgrounds/new" class="accent">Add a Campground</a>
 </div>
-
+<% if(result.results.length) {%> 
 <!-- show each campground -->
     <% for(let campground of result.results) {%>
         <div class="card mb-3 border border-secondary rounded rounded-1 theme-target">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-6 col-lg-4">
                     <!-- campground.images[0].url.includes('cloudinary')? campground.images[0].indexSize : -->
                     <% if(campground.images.length) {%>
-                        <img src="<%= campground.images[0].indexSize %>" alt="" class="img-fluid">
+                        <img src="<%= campground.images[0].url %>" alt="" class="img-fluid">
                     <% } else {%>
                         <img class="img-fluid" src="https://res.cloudinary.com/maranttt/image/upload/v1643679209/YelpCamp/nhzmrsjscjzcll52hpod.jpg" alt="">
                     <% } %>
                 </div>
-
-                <div class="col-md-8">
+                <div class="col-md-6 col-lg-8">
                     <div class="card-body">
                         <h5 class="card-title"><a href="/campgrounds/<%= campground._id %>" class="accent"><%= campground.title %></a></h5>
                             <!-- shorten description if it is long -->
                             <% if(campground.description.length >= 200){ %>
-                                <p class="card-text"><%= campground.description.substring(0, 220) %>...</p>
+                                <p class="card-text"><%= campground.description.substring(0, 190) %>...</p>
                             <% } else {%>
                                 <p class="card-text"><%= campground.description %></p>
                             <% } %> 
@@ -50,13 +107,21 @@
             </div>
         </div>
     <% } %>
-
+<% } else {%> 
+    <h1 class="pt-4">Sorry, no campgrounds to show in <span class="state-label"></span></h1>
+<% } %> 
     <script>
         const mapToken = '<%- process.env.MAPBOX_TOKEN %>';
         //map will be looking for features to search from
         const campgrounds = {features: <%- JSON.stringify(result.results) %>};
         const resultLength = <%-result.allItemsFetched %>;
+        const filter = '<%-result.filter%>';
     </script>
+    <noscript><input type=”submit” value=”Submit”></noscript>
       
     <script src="/javascripts/clusterMap.js"></script>
-    <script src="/javascripts/pagination.js"></script>
+    <% if(!result.filter) {%> 
+        <script src="/javascripts/pagination.js"></script>
+    <% } else {%> 
+        <script src="/javascripts/searchMode.js"></script>
+    <% } %> 

@@ -3,47 +3,99 @@ const User = require("../models/user")
 const { cloudinary } = require("../cloudinary")
 const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
 const mapBoxToken = process.env.MAPBOX_TOKEN;
+const axios = require("axios");
 const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
-mbxGeocoding({ accessToken: mapBoxToken });
-//TODO: MAKE A MIDDLEWARE FOR RENDERING INDEX
+const {config, reverseGeo} = require("../tools/index");
+/*
+** TODO:IMPROVE ACCESSIBLITY
+*/
 module.exports.index = async (req, res) => {
     const result = {};
+    result.results = [];
     const allCampgrounds = await Campground.find({});
     result.allItemsFetched = allCampgrounds.map( camp => camp).length;
     const max = Math.ceil(result.allItemsFetched / 20.0);
-    let {page, limit} = req.query;
+    let {page, limit, q} = req.query;
     page = parseInt(page);
-    limit = parseInt(limit);
-    if(!page || page < 0){
-        page=1;//very first page
-    }
-    if (page > max){
-        page=max;
-    }
-    if(!limit){
-        limit=20;
-    }
-    const startIndex = (page - 1) * limit;
-    const endIndex = page * limit;
-    const campgrounds = await Campground.find().limit(limit).skip(startIndex);
-    //get info for the pagination(prev and next)
-    if(startIndex > 0){
-        result.previous = {
-            page: page - 1,
-            limit
+        limit = parseInt(limit);
+        if(!page || page < 0){
+            page=1;//very first page
         }
-    }
-    if(endIndex < result.allItemsFetched){
-        result.next = {
-            page: page + 1,
-            limit
+        if (page > max){
+            page=max;
         }
+        if(!limit){
+            limit=20;
+        }
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
+        //get info for the pagination(prev and next)
+        if(startIndex > 0){
+            result.previous = {
+                page: page - 1,
+                limit
+            }
+        }
+        if(endIndex < result.allItemsFetched){
+            result.next = {
+                page: page + 1,
+                limit
+            }
+        }
+        res.cookie('currentPage', page);
+
+    if(!q){
+        //if there is no filter passed just render all campgrounds
+        res.clearCookie('filter');
+        const campgrounds = await Campground.find().limit(limit).skip(startIndex);
+        result.results = campgrounds;
+        return res.render('campgrounds/index', {result});
     }
-    res.cookie('currentPage', page);
-    result.results = campgrounds;
-    //for determining max number of pages
-    res.render('campgrounds/index', {result});
+
+    //user filtered campgrounds
+    const queried = await axios.get(`https://developer.nps.gov/api/v1/campgrounds?limit=50&stateCode=${q}`, config);
+    let matchedCampground;  
+    result.filter = q;
+    if(queried.data.data.length) {
+        //If found: save to database or just render if it already exists
+        const campPromises = queried.data.data.map(async function(camp) {
+            //make a more narrow filter for matching
+            if(camp.images[0]){
+                matchedCampground = await Campground.find({$and:[{title: camp.name},{description: camp.description}]});
+                //make a new campground 
+                if(matchedCampground.length){
+                    result.results.push(...matchedCampground);
+                } else {
+                    const campground = new Campground({
+                        location: camp.addresses[0] ? 
+                            `${camp.addresses[0].line1} ${camp.addresses[0].city} ${camp.addresses[0].stateCode}`: 
+                            await reverseGeo([Number.parseFloat( camp.longitude, 10), Number.parseFloat( camp.latitude, 10)]),
+        
+                        title: camp.name,
+        
+                        description: camp.description,
+                        //assign no price if there is no cost
+                        price: camp.fees[0] ? camp.fees[0].cost : 0,
+                        
+                        images: camp.images.map(c => ({ url: c.url})),
+        
+                        geometry: {
+                            type: 'Point',
+                            coordinates: [
+                                camp.longitude,
+                                camp.latitude
+                            ]
+                        }
+                    }) 
+                    await campground.save();
+                    result.results.push(campground);
+                }
+            }
+        });
+        await Promise.all(campPromises);
+    }
     // res.send(result);
+    res.render('campgrounds/index', {result})
 }
 
 module.exports.renderNewForm = (req, res) => {
@@ -155,17 +207,17 @@ module.exports.editCampground = async (req, res) => {
     const {id} = req.params;
     //make this shorter later
     const campground = await Campground.findByIdAndUpdate(id, {...req.body.campground});//spread each properties
-    const imgs = req.files.map(f => ({ url: f.path, filename: f.filename }))
-    campground.images.push(...imgs)
+    const imgs = req.files.map(f => ({ url: f.path, filename: f.filename }));
+    campground.images.push(...imgs);
     await campground.save();
     if(req.body.deleteImages){
         for(let filename of req.body.deleteImages){
-            await cloudinary.uploader.destroy(filename)
+            await cloudinary.uploader.destroy(filename);
         }
-        await campground.updateOne({$pull: {images: {filename: {$in:  req.body.deleteImages}}}})
+        await campground.updateOne({$pull: {images: {filename: {$in:  req.body.deleteImages}}}});
     }
-    req.flash('success', 'Successfully updated campground!')
-    res.redirect(`/campgrounds/${campground._id}`)
+    req.flash('success', 'Successfully updated campground!');
+    res.redirect(`/campgrounds/${campground._id}`);
 }
 
 module.exports.deleteCampground = async (req, res) => {
