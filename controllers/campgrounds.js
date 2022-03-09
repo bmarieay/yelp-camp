@@ -170,7 +170,8 @@ module.exports.showUserCampgrounds = async (req, res) => {
         }
     });
     result.results = user.campgrounds;
-    res.render('campgrounds/index', {result})
+    result.userMode = true;
+    res.render('campgrounds/index', {result});
 }
 
 module.exports.showCampground = async (req, res) => {
