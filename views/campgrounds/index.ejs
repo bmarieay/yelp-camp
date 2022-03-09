@@ -1,7 +1,7 @@
 <% layout('layouts/boilerplate') %>
 <div id="cluster-map" class="border border-dark"></div>
 
-<% if(result.results.length && !result.filter && !result.userMode) {%> 
+<% if(result.results.length && !result.filter && !result.mode) {%> 
     <h1 class="title">All Campgrounds</h1>
     <nav aria-label="Campgrounds navigation pages" class="fw-bold">
         <ul class="pagination pagination-sm d-flex justify-content-center">
@@ -14,7 +14,7 @@
         <li class="page-item next-btn align-self-center"><a class="page-link page-next" href="">Next</a></li>
         </ul>
     </nav>
-<% } else if(result.userMode && !result.filter) {%> 
+<% } else if(result.mode && !result.filter) {%> 
     <% if(result.results.length) {%> 
         <h1 class="pb-3 labelMode">Your Campground</h1>
     <% } else {%>
@@ -24,7 +24,7 @@
     <h1 class="pb-3 labelMode">Showing campgrounds at <span class="state-label"></span></h1>
 <% } %>
 
-<% if(!result.userMode) {%> 
+<% if(!result.mode) {%> 
 <form action="/campgrounds" class="pb-4">
     <select class="form-select theme-target" name="q" aria-label="Default select example" onchange="this.form.submit()">
         <option selected disabled aria-disabled="true">Select a state</option>
@@ -115,7 +115,7 @@
             </div>
         </div>
     <% } %>
-<% } else if(!result.results.length && !result.filter && !result.userMode){%> 
+<% } else if(!result.results.length && !result.filter && !result.mode){%> 
     <h1 class="pt-4">Sorry, no campgrounds to show in <span class="state-label"></span></h1>
 <% } %> 
     <script>
